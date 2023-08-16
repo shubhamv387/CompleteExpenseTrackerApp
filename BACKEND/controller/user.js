@@ -1,4 +1,5 @@
 const User = require("../model/User");
+const bcrypt = require("bcryptjs");
 
 exports.getAllUsers = (req, res, next) => {
   User.findAll()
@@ -16,10 +17,11 @@ exports.userSignup = (req, res, next) => {
       if (existingUser.length)
         return res.json({ message: "Email already exists!" });
       else {
+        const hashedPassword = bcrypt.hashSync(password, 10);
         User.create({
           name: name,
           email: email,
-          password: password,
+          password: hashedPassword,
           phone: phone,
         })
           .then((user) => {
@@ -32,7 +34,6 @@ exports.userSignup = (req, res, next) => {
 };
 
 exports.userLogin = (req, res, next) => {
-  console.log(req.body);
   const { email, password } = req.body;
 
   User.findAll({ where: { email: email } })
@@ -40,7 +41,12 @@ exports.userLogin = (req, res, next) => {
       if (!existingUser.length)
         return res.json({ message: "User does not Exists!" });
       else {
-        if (existingUser[0].password === password)
+        const isCorrectPassword = bcrypt.compareSync(
+          password,
+          existingUser[0].password
+        );
+        console.log(isCorrectPassword);
+        if (isCorrectPassword)
           return res.json({
             message: "User Logged in Successfully!",
             user: existingUser[0],
