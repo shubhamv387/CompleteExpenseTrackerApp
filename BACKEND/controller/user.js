@@ -45,7 +45,6 @@ exports.userLogin = (req, res, next) => {
           password,
           existingUser[0].password
         );
-        console.log(isCorrectPassword);
         if (isCorrectPassword)
           return res.json({
             message: "User Logged in Successfully!",
