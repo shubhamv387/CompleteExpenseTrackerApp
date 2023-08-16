@@ -2,6 +2,7 @@ const express = require("express");
 const sequelize = require("./utils/database");
 const userRouter = require("./router/user");
 const cors = require("cors");
+const bodyParser = require("body-parser");
 
 // const sequelize
 
@@ -9,8 +10,8 @@ const app = express();
 
 app.use(cors());
 
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 app.use("/user", userRouter);
 
