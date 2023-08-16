@@ -1,7 +1,7 @@
 const form = document.getElementById("form-submit");
 
 form.addEventListener("submit", (e) => {
-  // e.preventDefault();
+  e.preventDefault();
 
   const msg = document.getElementById("msg");
   const name = document.getElementById("name");
@@ -27,6 +27,9 @@ form.addEventListener("submit", (e) => {
         email.value = "";
         password.value = "";
         phone.value = "";
+
+        window.location.href =
+          "D:/Desktop 2023/Sharpener Web Starting/Learning Express JS/Expense Tracking App/FRONTEND/login/login.html";
       } else msg.className = "bg-danger text-white p-1 px-2";
 
       msg.style.display = "block";
