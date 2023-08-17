@@ -22,9 +22,9 @@ form.addEventListener("submit", (e) => {
 
         email.value = "";
         password.value = "";
-
-        window.location.href =
-          "D:/Desktop 2023/Sharpener Web Starting/Learning Express JS/Expense Tracking App/FRONTEND/expense/expense.html";
+        setTimeout(() => {
+          window.location.replace("/expense/expense.html");
+        }, 1000);
       } else msg.className = "bg-danger text-white p-1 px-2";
 
       msg.style.display = "block";

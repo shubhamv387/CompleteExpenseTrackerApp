@@ -1,3 +1,12 @@
+let rupee = new Intl.NumberFormat("en-IN", {
+  style: "currency",
+  currency: "INR",
+});
+
+let totalPrice = 0;
+
+const loadingExpense = document.getElementById("loadingExpense");
+
 window.addEventListener("DOMContentLoaded", showOnReload);
 
 const form = document.getElementById("form-submit");
@@ -5,9 +14,12 @@ const form = document.getElementById("form-submit");
 form.addEventListener("submit", (e) => {
   e.preventDefault();
 
+  let showTotalExpense = document.getElementById("totalExpense");
   const amount = document.getElementById("amount");
   const description = document.getElementById("description");
   const category = document.getElementById("category");
+
+  totalPrice += parseFloat(amount.value);
 
   // creating new expense object
   const ExpenseObj = {
@@ -22,6 +34,7 @@ form.addEventListener("submit", (e) => {
     .then((res) => {
       // adding each expense in the Expenselist
       showExpensesOnScreen(res.data);
+      showTotalExpense.innerText = rupee.format(totalPrice);
     })
     .catch((err) => console.log(err.message));
 
@@ -34,6 +47,8 @@ form.addEventListener("submit", (e) => {
 function showExpensesOnScreen(ExpenseObj) {
   const expenseList = document.getElementById("expenseList");
 
+  loadingExpense.style.display = "none";
+
   //creating a new li element
   const expense = document.createElement("li");
   expense.className = "list-group-item list-group-item-warning";
@@ -41,9 +56,9 @@ function showExpensesOnScreen(ExpenseObj) {
   expense.innerHTML = `
   <div class = "d-block mb-2 text-capitalize"> 
     <span class = "fw-bold"> Amount:</span> 
-    ${ExpenseObj.amount} INR <br> 
+    ${ExpenseObj.amount} INR<br> 
     <span class = "fw-bold"> Description:</span> 
-    ${ExpenseObj.description} <br> 
+    ${ExpenseObj.description}<br> 
     <span class = "fw-bold"> Category:</span> 
     ${ExpenseObj.category} 
   </div>`;
@@ -81,7 +96,7 @@ function showExpensesOnScreen(ExpenseObj) {
     document.getElementById("updateBtn").onclick = editedExpense;
 
     function editedExpense() {
-      newAmount = parseInt(document.getElementById("amount").value);
+      newAmount = parseFloat(document.getElementById("amount").value);
       let updatedExpense = {
         amount: document.getElementById("amount").value,
         description: document.getElementById("description").value,
@@ -102,10 +117,16 @@ function showExpensesOnScreen(ExpenseObj) {
             updatedExpense
           )
           .then((updatedExpense) => {
-            ExpenseObj = updatedExpense.data;
+            let showTotalExpense = document.getElementById("totalExpense");
+            totalPrice -= parseFloat(ExpenseObj.amount);
+
+            ExpenseObj = { ...updatedExpense.data };
 
             // manupulating the previous expense data with new data
             expense.firstElementChild.innerHTML = `<span class = "fw-bold"> Amount:</span> ${ExpenseObj.amount} INR <br> <span class = "fw-bold"> Description:</span> ${ExpenseObj.description} <br> <span class = "fw-bold"> Category:</span> ${ExpenseObj.category}`;
+
+            totalPrice += parseFloat(ExpenseObj.amount);
+            showTotalExpense.innerText = rupee.format(totalPrice);
 
             // resetting the submit and update buttons
             document.getElementById("submitBtn").style.display = "block";
@@ -127,21 +148,46 @@ function showExpensesOnScreen(ExpenseObj) {
   function deleteExpense() {
     axios
       .delete(`http://localhost:3000/expense/delete-expense/${ExpenseObj.id}`)
-      .then((res) => {
+      .then((deletedExpense) => {
+        let showTotalExpense = document.getElementById("totalExpense");
+        totalPrice -= parseFloat(deletedExpense.data.amount);
+        showTotalExpense.innerText = rupee.format(totalPrice);
+
         expenseList.removeChild(expense);
+        if (!expenseList.children[1]) {
+          loadingExpense.innerHTML = "Add New Expenses Here!";
+          loadingExpense.style.display = "block";
+        }
       })
       .catch((err) => console.log(err.message));
   }
 }
 
 function showOnReload() {
-  axios
-    .get("http://localhost:3000/expense/")
-    .then((expenses) => {
-      console.log(expenses.data);
-      expenses.data.forEach((expense) => {
-        showExpensesOnScreen(expense);
+  const totalExpense = document.getElementById("totalExpense");
+
+  loadingExpense.innerHTML = "Loding Expenses...";
+  loadingExpense.style.display = "block";
+
+  setTimeout(async () => {
+    axios
+      .get("http://localhost:3000/expense/")
+      .then((expenses) => {
+        // console.log(expenses.data);
+        if (!expenses.data.length)
+          loadingExpense.innerHTML = "Add New Expenses Here!";
+        else {
+          loadingExpense.style.display = "none";
+          expenses.data.forEach((expense) => {
+            showExpensesOnScreen(expense);
+            totalPrice += expense.amount;
+          });
+        }
+        totalExpense.innerHTML = rupee.format(totalPrice);
+      })
+      .catch((err) => {
+        totalExpense.innerHTML = rupee.format(totalPrice);
+        console.log(err.message);
       });
-    })
-    .catch((err) => console.log(err.message));
+  }, 800);
 }

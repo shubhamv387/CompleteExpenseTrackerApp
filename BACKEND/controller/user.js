@@ -25,7 +25,15 @@ exports.userSignup = (req, res, next) => {
           phone: phone,
         })
           .then((user) => {
-            res.json({ message: "User Created Successfully!", user });
+            res.json({
+              message: "User Created Successfully!",
+              userDetails: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                phone: user.phone,
+              },
+            });
           })
           .catch((err) => console.log(err));
       }

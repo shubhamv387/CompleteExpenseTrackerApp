@@ -20,7 +20,7 @@ form.addEventListener("submit", (e) => {
     .post("http://localhost:3000/user/signup", userObj)
     .then((user) => {
       msg.innerHTML = user.data.message;
-      if (user.data.user) {
+      if (user.data.userDetails) {
         msg.className = "bg-success text-white p-1 px-2";
 
         name.value = "";
@@ -28,8 +28,10 @@ form.addEventListener("submit", (e) => {
         password.value = "";
         phone.value = "";
 
-        window.location.href =
-          "D:/Desktop 2023/Sharpener Web Starting/Learning Express JS/Expense Tracking App/FRONTEND/login/login.html";
+        console.log(user.data.userDetails);
+        setTimeout(() => {
+          window.location.replace("/login/login.html");
+        }, 1000);
       } else msg.className = "bg-danger text-white p-1 px-2";
 
       msg.style.display = "block";
