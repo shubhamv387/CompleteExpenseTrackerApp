@@ -17,13 +17,17 @@ form.addEventListener("submit", (e) => {
     .post("http://localhost:3000/user/login", userObj)
     .then((user) => {
       msg.innerHTML = user.data.message;
-      if (user.data.user) {
+
+      // console.log(user.data.token);
+      if (user.data.userDetails) {
         msg.className = "bg-success text-white p-1 px-2";
+
+        localStorage.setItem("token", user.data.token);
 
         email.value = "";
         password.value = "";
         setTimeout(() => {
-          window.location.replace("/expense/expense.html");
+          window.location.replace("../expense/expense.html");
         }, 1000);
       } else msg.className = "bg-danger text-white p-1 px-2";
 

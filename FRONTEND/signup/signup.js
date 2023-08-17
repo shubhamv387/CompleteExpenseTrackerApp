@@ -30,7 +30,7 @@ form.addEventListener("submit", (e) => {
 
         console.log(user.data.userDetails);
         setTimeout(() => {
-          window.location.replace("/login/login.html");
+          window.location.replace("../login/login.html");
         }, 1000);
       } else msg.className = "bg-danger text-white p-1 px-2";
 

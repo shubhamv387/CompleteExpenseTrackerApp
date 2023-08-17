@@ -5,6 +5,8 @@ let rupee = new Intl.NumberFormat("en-IN", {
 
 let totalPrice = 0;
 
+const token = localStorage.getItem("token");
+
 const loadingExpense = document.getElementById("loadingExpense");
 
 window.addEventListener("DOMContentLoaded", showOnReload);
@@ -30,7 +32,9 @@ form.addEventListener("submit", (e) => {
 
   // POST request to backend
   axios
-    .post("http://localhost:3000/expense/add-expense", ExpenseObj)
+    .post("http://localhost:3000/expense/add-expense", ExpenseObj, {
+      headers: { Authorization: token },
+    })
     .then((res) => {
       // adding each expense in the Expenselist
       showExpensesOnScreen(res.data);
@@ -51,12 +55,13 @@ function showExpensesOnScreen(ExpenseObj) {
 
   //creating a new li element
   const expense = document.createElement("li");
-  expense.className = "list-group-item list-group-item-warning";
+  expense.className = "list-group-item mb-2";
+  expense.style.background = "#f2f2f2";
 
   expense.innerHTML = `
-  <div class = "d-block mb-2 text-capitalize"> 
+  <div class = "d-block mb-2 text-capitalize" style="font-size: 18px;"> 
     <span class = "fw-bold"> Amount:</span> 
-    ${ExpenseObj.amount} INR<br> 
+    ${rupee.format(ExpenseObj.amount)}<br> 
     <span class = "fw-bold"> Description:</span> 
     ${ExpenseObj.description}<br> 
     <span class = "fw-bold"> Category:</span> 
@@ -114,7 +119,10 @@ function showExpensesOnScreen(ExpenseObj) {
         axios
           .put(
             `http://localhost:3000/expense/edit-expense/${ExpenseObj.id}`,
-            updatedExpense
+            updatedExpense,
+            {
+              headers: { Authorization: token },
+            }
           )
           .then((updatedExpense) => {
             let showTotalExpense = document.getElementById("totalExpense");
@@ -123,7 +131,13 @@ function showExpensesOnScreen(ExpenseObj) {
             ExpenseObj = { ...updatedExpense.data };
 
             // manupulating the previous expense data with new data
-            expense.firstElementChild.innerHTML = `<span class = "fw-bold"> Amount:</span> ${ExpenseObj.amount} INR <br> <span class = "fw-bold"> Description:</span> ${ExpenseObj.description} <br> <span class = "fw-bold"> Category:</span> ${ExpenseObj.category}`;
+            expense.firstElementChild.innerHTML = `<span class = "fw-bold"> Amount:</span> ${rupee.format(
+              ExpenseObj.amount
+            )} <br> <span class = "fw-bold"> Description:</span> ${
+              ExpenseObj.description
+            } <br> <span class = "fw-bold"> Category:</span> ${
+              ExpenseObj.category
+            }`;
 
             totalPrice += parseFloat(ExpenseObj.amount);
             showTotalExpense.innerText = rupee.format(totalPrice);
@@ -144,10 +158,12 @@ function showExpensesOnScreen(ExpenseObj) {
 
   // deleting an expense
   deleteBtn.addEventListener("click", deleteExpense);
-
   function deleteExpense() {
+    // console.log(token);
     axios
-      .delete(`http://localhost:3000/expense/delete-expense/${ExpenseObj.id}`)
+      .delete(`http://localhost:3000/expense/delete-expense/${ExpenseObj.id}`, {
+        headers: { Authorization: token },
+      })
       .then((deletedExpense) => {
         let showTotalExpense = document.getElementById("totalExpense");
         totalPrice -= parseFloat(deletedExpense.data.amount);
@@ -169,11 +185,12 @@ function showOnReload() {
   loadingExpense.innerHTML = "Loding Expenses...";
   loadingExpense.style.display = "block";
 
-  setTimeout(async () => {
+  setTimeout(() => {
     axios
-      .get("http://localhost:3000/expense/")
+      .get("http://localhost:3000/expense", {
+        headers: { Authorization: token },
+      })
       .then((expenses) => {
-        // console.log(expenses.data);
         if (!expenses.data.length)
           loadingExpense.innerHTML = "Add New Expenses Here!";
         else {
@@ -191,3 +208,9 @@ function showOnReload() {
       });
   }, 800);
 }
+
+const logout = document.getElementById("logout");
+logout.addEventListener("click", () => {
+  localStorage.setItem("token", "");
+  window.location.replace("../login/login.html");
+});

@@ -2,8 +2,8 @@ const Expense = require("../model/Expense");
 const User = require("../model/User");
 
 exports.getAllExpenses = (req, res, next) => {
-  req.user
-    .getExpenses()
+  console.log(req.body);
+  Expense.findAll({ where: { userId: req.user.id } })
     .then((expenses) => {
       res.json(expenses);
     })
@@ -12,8 +12,7 @@ exports.getAllExpenses = (req, res, next) => {
 
 exports.addExpense = (req, res, next) => {
   const { amount, description, category } = req.body;
-  req.user
-    .createExpense({ amount, description, category })
+  Expense.create({ amount, description, category, userId: req.user.id })
     .then((expense) => {
       res.json(expense);
     })
@@ -33,9 +32,7 @@ exports.editExpense = (req, res, next) => {
 
 exports.deleteExpense = (req, res, next) => {
   const { id } = req.params;
-
-  req.user
-    .getExpenses({ where: { id: id } })
+  Expense.findAll({ where: { id: id } })
     .then((expense) => {
       expense[0]
         .destroy()

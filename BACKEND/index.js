@@ -2,6 +2,7 @@ const express = require("express");
 const sequelize = require("./utils/database");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 
 //Routers
 const userRouter = require("./router/user");
@@ -13,19 +14,21 @@ const Expenses = require("./model/Expense");
 
 const app = express();
 
+// app.use((req, res, next) => {
+//   User.findOne({ where: { email: "shubhamv387@gmail.com" } })
+//     .then((user) => {
+//       req.user = user;
+//       next();
+//     })
+//     .catch((err) => console.log(err.message));
+// });
+
 app.use(cors());
+
+app.use(cookieParser());
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
-app.use((req, res, next) => {
-  User.findOne({ where: { email: "shubhamv387@gmail.com" } })
-    .then((user) => {
-      req.user = user;
-      next();
-    })
-    .catch((err) => console.log(err.message));
-});
 
 app.use("/user", userRouter);
 app.use("/expense", expenseRouter);
