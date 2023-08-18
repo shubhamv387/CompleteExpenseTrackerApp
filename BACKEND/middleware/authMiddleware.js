@@ -10,12 +10,7 @@ exports.authUser = (req, res, next) => {
 
     User.findAll({ where: { id: decoded.userId } })
       .then((user) => {
-        req.user = {
-          id: user[0].id,
-          name: user[0].name,
-          email: user[0].email,
-          phone: user[0].phone,
-        };
+        req.user = user[0];
         // console.log(req.user);
         next();
       })

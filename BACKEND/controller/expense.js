@@ -2,17 +2,22 @@ const Expense = require("../model/Expense");
 const User = require("../model/User");
 
 exports.getAllExpenses = (req, res, next) => {
-  console.log(req.body);
-  Expense.findAll({ where: { userId: req.user.id } })
+  req.user
+    .getExpenses()
     .then((expenses) => {
-      res.json(expenses);
+      res.json({
+        userName: req.user.name,
+        isPremium: req.user.isPremium,
+        expenses: expenses,
+      });
     })
     .catch((err) => console.log(err));
 };
 
 exports.addExpense = (req, res, next) => {
   const { amount, description, category } = req.body;
-  Expense.create({ amount, description, category, userId: req.user.id })
+  req.user
+    .createExpense({ amount, description, category })
     .then((expense) => {
       res.json(expense);
     })

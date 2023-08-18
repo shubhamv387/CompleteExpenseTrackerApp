@@ -191,11 +191,22 @@ function showOnReload() {
         headers: { Authorization: token },
       })
       .then((expenses) => {
-        if (!expenses.data.length)
+        if (!expenses.data.isPremium)
+          document.getElementById("getpremium").style.display = "block";
+
+        const welcomeText = document.getElementById("welcomeText");
+        if (!expenses.data.expenses.length) {
+          welcomeText.innerText = `Hello, ${
+            expenses.data.userName.split(" ")[0]
+          }`;
           loadingExpense.innerHTML = "Add New Expenses Here!";
-        else {
+        } else {
+          welcomeText.innerText = `Hello, ${
+            expenses.data.userName.split(" ")[0]
+          }`;
           loadingExpense.style.display = "none";
-          expenses.data.forEach((expense) => {
+
+          expenses.data.expenses.forEach((expense) => {
             showExpensesOnScreen(expense);
             totalPrice += expense.amount;
           });
@@ -204,7 +215,11 @@ function showOnReload() {
       })
       .catch((err) => {
         totalExpense.innerHTML = rupee.format(totalPrice);
+        loadingExpense.innerHTML = "No authorized, please login again!";
         console.log(err.message);
+        setTimeout(() => {
+          window.location.replace("../login/login.html");
+        }, 1500);
       });
   }, 800);
 }
@@ -213,4 +228,62 @@ const logout = document.getElementById("logout");
 logout.addEventListener("click", () => {
   localStorage.setItem("token", "");
   window.location.replace("../login/login.html");
+});
+
+const profilePic = document.getElementById("profilePic");
+profilePic.addEventListener("click", () => {
+  const welcomeDiv = document.getElementById("welcomeDiv");
+  welcomeDiv.classList.toggle("profileShow");
+});
+
+// Function to handle premium purchase
+document.getElementById("getpremium").addEventListener("click", (e) => {
+  // e.preventDefault();
+
+  axios
+    .get("http://localhost:3000/order/premiummembership", {
+      headers: { Authorization: token },
+    })
+    .then((res) => {
+      // console.log(res);
+
+      const options = {
+        key: res.data.key_id,
+        order_id: res.data.order.id,
+        handler: async function (response) {
+          // The payment response includes the razorpay_payment_id
+          const payment_id = response.razorpay_payment_id;
+
+          // Send the payment_id to your server for updating transaction status
+          try {
+            const respons = await axios.post(
+              "http://localhost:3000/order/updatetrnasectionstatus",
+              { order_id: options.order_id, payment_id: payment_id },
+              {
+                headers: { Authorization: token },
+              }
+            );
+            console.log(respons);
+            alert("You are a Premium User Now!");
+          } catch (error) {
+            console.error("Error updating transaction status:", error);
+            alert("Payment successful, but transaction update failed.");
+          }
+        },
+      };
+
+      // Initialize the Razorpay instance and open the payment dialog
+      const rzp1 = new Razorpay(options);
+      rzp1.open();
+
+      // Handle payment failure
+      rzp1.on("payment.failed", function (response) {
+        console.log("Payment Failed:", response);
+        alert("Payment failed. Please try again or contact support.");
+      });
+    })
+    .catch((err) => {
+      console.error("Error:", err.message);
+      alert("An error occurred. Please try again later.");
+    });
 });
