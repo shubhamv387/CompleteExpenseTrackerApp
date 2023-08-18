@@ -1,6 +1,6 @@
+require("dotenv").config();
 const Razorpay = require("razorpay");
 const Order = require("../model/order.js");
-require("dotenv").config();
 
 exports.purchasepremium = async (req, res) => {
   try {
@@ -29,27 +29,42 @@ exports.purchasepremium = async (req, res) => {
   }
 };
 
-exports.updateTrnasectionStatus = (req, res, next) => {
-  const { payment_id, order_id } = req.body;
+exports.updateTrnasectionStatus = async (req, res, next) => {
+  let payment_id = req.body.error
+    ? req.body.error.metadata.payment_id
+    : req.body.payment_id;
 
-  Order.findOne({ where: { orderId: order_id } })
-    .then((order) => {
-      order
-        .update({ paymentId: payment_id, status: "SUCCESSFULL" })
-        .then(() => {
-          req.user
-            .update({ isPremium: true })
-            .then(() => {
-              return res.status(200).json({
-                success: true,
-                message: "Transection successfull",
-              });
-            })
-            .catch((err) => console.log(err));
-        })
-        .catch((err) => console.log(err));
-    })
-    .catch((err) => console.log(err));
+  let order_id = req.body.error
+    ? req.body.error.metadata.order_id
+    : req.body.order_id;
+
+  try {
+    const order = await Order.findOne({ where: { orderId: order_id } });
+
+    if (req.body.error) {
+      await order.update({ paymentId: payment_id, status: "FAILED" });
+      return res
+        .status(200)
+        .json({ success: false, message: "Transection Failed" });
+    }
+
+    const updatedOrder = await order.update({
+      paymentId: payment_id,
+      status: "SUCCESSFULL",
+    });
+    const updatedUser = await req.user.update({ isPremium: true });
+
+    Promise.all([updatedOrder, updatedUser])
+      .then(() => {
+        return res.status(200).json({
+          success: true,
+          message: "Transection successfull",
+        });
+      })
+      .catch((err) => console.log({ Error: "Promise.all Failed", err }));
+  } catch (error) {
+    console.log(err);
+  }
 };
 
 exports.getAllOrders = (req, res, next) => {

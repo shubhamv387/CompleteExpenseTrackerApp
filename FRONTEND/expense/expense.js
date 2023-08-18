@@ -237,8 +237,12 @@ profilePic.addEventListener("click", () => {
 });
 
 // Function to handle premium purchase
-document.getElementById("getpremium").addEventListener("click", (e) => {
-  // e.preventDefault();
+document
+  .getElementById("getpremium")
+  .addEventListener("click", purchasePremiumService);
+
+function purchasePremiumService(e) {
+  e.preventDefault();
 
   axios
     .get("http://localhost:3000/order/premiummembership", {
@@ -263,7 +267,7 @@ document.getElementById("getpremium").addEventListener("click", (e) => {
                 headers: { Authorization: token },
               }
             );
-            console.log(respons);
+            document.getElementById("getpremium").style.display = "none";
             alert("You are a Premium User Now!");
           } catch (error) {
             console.error("Error updating transaction status:", error);
@@ -278,12 +282,26 @@ document.getElementById("getpremium").addEventListener("click", (e) => {
 
       // Handle payment failure
       rzp1.on("payment.failed", function (response) {
-        console.log("Payment Failed:", response);
-        alert("Payment failed. Please try again or contact support.");
+        console.log(response);
+        axios
+          .post(
+            "http://localhost:3000/order/updatetrnasectionstatus",
+            response,
+            {
+              headers: { Authorization: token },
+            }
+          )
+          .then(() => {
+            alert("Payment failed. Please try again or contact support.");
+          })
+          .catch((err) => {
+            console.error("Error:", err.message);
+            alert("An error occurred. Please try again later.");
+          });
       });
     })
     .catch((err) => {
       console.error("Error:", err.message);
       alert("An error occurred. Please try again later.");
     });
-});
+}
