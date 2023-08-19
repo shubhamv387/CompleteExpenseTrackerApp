@@ -18,25 +18,28 @@ exports.getAllExpenses = async (req, res, next) => {
 
 exports.getLbUsersExpenses = async (req, res, next) => {
   try {
-    let allUsers = await User.findAll({ attributes: ["id", "name"] });
+    // let allUsers = await User.findAll({ attributes: ["id", "name"] });
     // console.log(allUsers[0].id, allUsers[0].name);
 
-    const expenses = await Expense.findAll({
+    const users = await User.findAll({
       attributes: [
-        "userId",
-        [sequelize.fn("sum", sequelize.col("amount")), "totalCost"],
+        "id",
+        "name",
+        [sequelize.fn("sum", sequelize.col("expenses.amount")), "totalCost"],
       ],
-      group: ["userId"],
+      include: {
+        model: Expense,
+        attributes: [],
+      },
+      group: ["user.id"],
     });
 
     let userTotalExpenses = [];
 
-    // console.log(expenses[0].dataValues.totalCost);
-
-    for (let i = 0; i < expenses.length; i++) {
+    for (const user of users) {
       userTotalExpenses.push({
-        name: allUsers[i].name,
-        totalExpense: expenses[i].dataValues.totalCost,
+        name: user.name,
+        totalExpense: user.dataValues.totalCost,
       });
     }
 
