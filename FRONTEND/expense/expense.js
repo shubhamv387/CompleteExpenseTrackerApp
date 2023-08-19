@@ -67,11 +67,11 @@ function showExpensesOnScreen(ExpenseObj) {
 
   //creating a new li element
   const expense = document.createElement("li");
-  expense.className = "list-group-item mb-2";
+  expense.className = "list-group-item mb-0";
   expense.style.background = "#f2f2f2";
 
   expense.innerHTML = `
-  <div class = "d-block mb-2 text-capitalize" style="font-size: 18px;"> 
+  <div class = "d-block mb-2 text-capitalize" style="font-size: 17px;"> 
     <span class = "fw-bold"> Amount:</span> 
     ${rupee.format(ExpenseObj.amount)}<br> 
     <span class = "fw-bold"> Description:</span> 
@@ -285,10 +285,10 @@ function leaderBoardFeature() {
       users.data.users.forEach((user) => {
         const lbUser = document.createElement("li");
         lbUser.className =
-          "list-group-item d-flex justify-content-between list-group-item-danger";
-        lbUser.innerHTML = `<span class="d-flex" style="width: 75%"><span style="width: 20%">${(i += 1)}</span> <span>${
+          "list-group-item d-flex justify-content-between align-items-center list-group-item-danger";
+        lbUser.innerHTML = `<span class="d-flex align-items-center" style="width: 75%"><span style="width: 20%">${(i += 1)}</span> <span>${
           user.name
-        }</span></span> <span>${rupee.format(user.totalExpense)}</span>`;
+        }</span></span> <span>${rupee.format(user.allExpenses)}</span>`;
         lbUserList.appendChild(lbUser);
       });
       lbDisplay.style.display = "block";

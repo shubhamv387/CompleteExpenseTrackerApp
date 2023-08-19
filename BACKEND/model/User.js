@@ -28,6 +28,17 @@ const User = sequelize.define("user", {
     type: DataType.BOOLEAN,
     defaultValue: false,
   },
+  allExpenses: {
+    type: DataType.DOUBLE,
+    defaultValue: 0,
+  },
 });
+
+// Define a static method
+User.findByIdAndUpdateAllExpenses = async function (lastAmount, newAmount, id) {
+  const user = await this.findOne({ where: { id } });
+  user.allExpenses -= lastAmount;
+  user.allExpenses += newAmount;
+};
 
 module.exports = User;
