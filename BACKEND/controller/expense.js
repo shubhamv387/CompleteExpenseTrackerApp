@@ -1,6 +1,6 @@
 const Expense = require("../model/Expense");
 const User = require("../model/User");
-const { all } = require("../router/expense");
+const sequelize = require("../utils/database");
 
 exports.getAllExpenses = async (req, res, next) => {
   try {
@@ -18,21 +18,27 @@ exports.getAllExpenses = async (req, res, next) => {
 
 exports.getLbUsersExpenses = async (req, res, next) => {
   try {
-    const expenses = await Expense.findAll();
-    // console.log(expenses);
-    let allUsers = await User.findAll();
-    // console.log(allUsers);
+    let allUsers = await User.findAll({ attributes: ["id", "name"] });
+    // console.log(allUsers[0].id, allUsers[0].name);
 
-    let userTotalExpenses = allUsers.map((user) => {
-      let userExpense = expenses.filter(
-        (expense) => expense.userId === user.id
-      );
-      let totalExpense = 0;
-      userExpense.forEach((expense) => {
-        totalExpense += expense.amount;
-      });
-      return { id: user.id, name: user.name, totalExpense: totalExpense };
+    const expenses = await Expense.findAll({
+      attributes: [
+        "userId",
+        [sequelize.fn("sum", sequelize.col("amount")), "totalCost"],
+      ],
+      group: ["userId"],
     });
+
+    let userTotalExpenses = [];
+
+    // console.log(expenses[0].dataValues.totalCost);
+
+    for (let i = 0; i < expenses.length; i++) {
+      userTotalExpenses.push({
+        name: allUsers[i].name,
+        totalExpense: expenses[i].dataValues.totalCost,
+      });
+    }
 
     userTotalExpenses.sort((a, b) => b.totalExpense - a.totalExpense);
 

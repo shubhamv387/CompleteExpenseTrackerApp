@@ -8,7 +8,10 @@ exports.authUser = async (req, res, next) => {
   try {
     if (token) {
       const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-      const user = await User.findAll({ where: { id: decoded.userId } });
+      const user = await User.findAll({
+        where: { id: decoded.userId },
+        attributes: ["id", "name", "email", "phone", "isPremium"],
+      });
       req.user = user[0];
       next();
     } else {
