@@ -1,10 +1,18 @@
 const express = require("express");
 const expenseController = require("../controller/expense");
 const authMiddleware = require("../middleware/authMiddleware");
+const isPremium = require("../middleware/isPremium");
 
 const router = express.Router();
 
 router.get("/", authMiddleware.authUser, expenseController.getAllExpenses);
+
+router.get(
+  "/lb-users-expenses",
+  authMiddleware.authUser,
+  isPremium.isPremiumUser,
+  expenseController.getLbUsersExpenses
+);
 
 router.post(
   "/add-expense",

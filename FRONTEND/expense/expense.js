@@ -40,6 +40,18 @@ form.addEventListener("submit", (e) => {
       showExpensesOnScreen(res.data);
       showTotalExpense.innerText = rupee.format(totalPrice);
     })
+    .then(() => {
+      const lbUserList = document.getElementById("lbUserList");
+
+      const userArray = Array.from(lbUserList.children);
+
+      let i = 1;
+      while (i < userArray.length) {
+        lbUserList.removeChild(lbUserList.lastElementChild);
+        i++;
+      }
+      leaderBoardFeature();
+    })
     .catch((err) => console.log(err.message));
 
   // resetting the input fields after submission
@@ -151,7 +163,18 @@ function showExpensesOnScreen(ExpenseObj) {
             document.getElementById("description").value = "";
             document.getElementById("category").value = "";
           })
-          .catch((err) => console.log(err.message));
+          .then(() => {
+            const lbUserList = document.getElementById("lbUserList");
+            const userArray = Array.from(lbUserList.children);
+
+            let i = 1;
+            while (i < userArray.length) {
+              lbUserList.removeChild(lbUserList.lastElementChild);
+              i++;
+            }
+            leaderBoardFeature();
+          })
+          .catch((err) => console.log(err.message, err.response.data));
       }
     }
   }
@@ -168,12 +191,24 @@ function showExpensesOnScreen(ExpenseObj) {
         let showTotalExpense = document.getElementById("totalExpense");
         totalPrice -= parseFloat(deletedExpense.data.amount);
         showTotalExpense.innerText = rupee.format(totalPrice);
-
         expenseList.removeChild(expense);
+
         if (!expenseList.children[1]) {
           loadingExpense.innerHTML = "Add New Expenses Here!";
           loadingExpense.style.display = "block";
         }
+      })
+      .then(() => {
+        const lbUserList = document.getElementById("lbUserList");
+
+        const userArray = Array.from(lbUserList.children);
+
+        let i = 1;
+        while (i < userArray.length) {
+          lbUserList.removeChild(lbUserList.lastElementChild);
+          i++;
+        }
+        leaderBoardFeature();
       })
       .catch((err) => console.log(err.message));
   }
@@ -191,8 +226,20 @@ function showOnReload() {
         headers: { Authorization: token },
       })
       .then((expenses) => {
-        if (!expenses.data.isPremium)
+        const lbDisplay = document.getElementById("lbDisplay");
+
+        if (!expenses.data.isPremium) {
           document.getElementById("getpremium").style.display = "block";
+          document.getElementById("expenseList").style.marginBottom = "100px";
+          lbDisplay.style.display = "none !important";
+        } else {
+          leaderBoardFeature();
+
+          document.getElementById("premiumUserText").innerText = `Hey ${
+            expenses.data.userName.split(" ")[0]
+          }, You Are A Premium User`;
+          document.getElementById("premiumUser").style.display = "block";
+        }
 
         const welcomeText = document.getElementById("welcomeText");
         if (!expenses.data.expenses.length) {
@@ -216,12 +263,39 @@ function showOnReload() {
       .catch((err) => {
         totalExpense.innerHTML = rupee.format(totalPrice);
         loadingExpense.innerHTML = "No authorized, please login again!";
-        console.log(err.message);
+        console.log(err.message, err.response.data);
         setTimeout(() => {
           window.location.replace("../login/login.html");
         }, 1500);
       });
   }, 800);
+}
+
+function leaderBoardFeature() {
+  /* LEADERBOARD FEATURES START */
+  const lbUserList = document.getElementById("lbUserList");
+  axios
+    .get("http://localhost:3000/expense/lb-users-expenses", {
+      headers: { Authorization: token },
+    })
+    .then((users) => {
+      // console.log(users);
+
+      let i = 0;
+      users.data.users.forEach((user) => {
+        const lbUser = document.createElement("li");
+        lbUser.className =
+          "list-group-item d-flex justify-content-between list-group-item-danger";
+        lbUser.innerHTML = `<span class="d-flex" style="width: 75%"><span style="width: 20%">${(i += 1)}</span> <span>${
+          user.name
+        }</span></span> <span>${rupee.format(user.totalExpense)}</span>`;
+        lbUserList.appendChild(lbUser);
+      });
+      lbDisplay.style.display = "block";
+    })
+    .catch((err) => console.log(err.message, err.response.data));
+
+  /* LEADERBOARD FEATURES END */
 }
 
 const logout = document.getElementById("logout");
@@ -260,7 +334,7 @@ function purchasePremiumService(e) {
 
           // Send the payment_id to your server for updating transaction status
           try {
-            const respons = await axios.post(
+            const response = await axios.post(
               "http://localhost:3000/order/updatetrnasectionstatus",
               { order_id: options.order_id, payment_id: payment_id },
               {
@@ -268,6 +342,13 @@ function purchasePremiumService(e) {
               }
             );
             document.getElementById("getpremium").style.display = "none";
+            document.getElementById("premiumUser").style.display = "block";
+
+            document.getElementById("premiumUserText").innerText = `Hey ${
+              response.data.userName.split(" ")[0]
+            }, You Are A Premium User`;
+            document.getElementById("expenseList").style.marginBottom = "0";
+            leaderBoardFeature();
             alert("You are a Premium User Now!");
           } catch (error) {
             console.error("Error updating transaction status:", error);

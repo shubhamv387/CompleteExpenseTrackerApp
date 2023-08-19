@@ -24,16 +24,17 @@
     </style>
   </head>
   <body>
+    <!-- HEADER START -->
     <div class="container-fluid bg-dark d-flex justify-content-center">
       <div
         class="col d-flex p-2 justify-content-between align-items-center"
         style="max-width: 650px"
       >
-        <h1 class="d-inline p-2 bg-dark text-white">
+        <h1 class="d-inline p-2 fs-2 bg-dark text-white">
           <a
             class="text-white text-decoration-none"
             href="../expense/expense.html"
-            >All Expenses</a
+            >Expense Tracker</a
           >
         </h1>
         <div class="col d-flex position-relative">
@@ -61,7 +62,10 @@
         </div>
       </div>
     </div>
+    <!-- HEADER START -->
+
     <div class="position-relative d-flex flex-column justify-content-center">
+      <!-- EXPENSE FORM START -->
       <div class="container d-flex p-4 pb-0" style="max-width: 650px">
         <div class="form-control pt-2 px-4 pb-4" style="background: #f2f2f2">
           <form id="form-submit">
@@ -115,17 +119,44 @@
           </form>
         </div>
       </div>
-      <button
-        id="getpremium"
-        class="btn btn-warning w-25 mt-4 align-self-center"
-      >
-        Get Premium
-      </button>
+      <!-- EXPENSE FORM END -->
 
+      <!-- IS PREMIUM USER START -->
       <div
-        class="container d-flex p-4"
-        style="max-width: 650px; margin-bottom: 100px !important"
+        class="container d-flex flex-column align-items-center"
+        style="max-width: 630px; width: 96%"
       >
+        <button
+          id="getpremium"
+          class="btn btn-warning mt-4 align-self-center"
+          style="display: none"
+        >
+          Get Premium
+        </button>
+        <span
+          id="premiumUser"
+          class="text-white d-flex justify-content-around align-items-center text-center form-control mt-4 text-capitalize w-100 bg-primary"
+          style="display: none !important"
+        >
+          <i class="fa fa-crown text-warning fs-3"></i>
+          <p class="mb-0" style="font-size: 18px" id="premiumUserText"></p>
+          <i class="fa fa-crown text-warning fs-3"></i>
+        </span>
+      </div>
+      <!-- IS PREMIUM USER END -->
+
+      <!-- ALL EXPENSES START -->
+      <div
+        class="container d-flex flex-column p-4 pb-0"
+        style="max-width: 650px"
+      >
+        <h3
+          class="text-white d-flex justify-content-center align-items-center text-center form-control mb-1 text-capitalize w-100 bg-dark"
+        >
+          <p class="mb-0 fs-5">Your All Expenses</p>
+          <!-- <i class="fa fa-crown text-warning fs-3"></i> -->
+        </h3>
+
         <ul class="list-unstyled list-group w-100" id="expenseList">
           <h4
             id="loadingExpense"
@@ -136,7 +167,51 @@
           </h4>
         </ul>
       </div>
+      <!-- ALL EXPENSES START -->
 
+      <!-- LEADERBOARD START -->
+      <div
+        id="lbDisplay"
+        class="container d-flex flex-column p-4"
+        style="
+          max-width: 650px;
+          margin-bottom: 100px !important;
+          display: none !important;
+        "
+      >
+        <h3
+          class="text-white d-flex justify-content-center align-items-center text-center form-control mb-1 text-capitalize w-100 bg-primary"
+        >
+          <i class="fa fa-medal text-warning fs-3"></i>
+          <span class="mb-0 fs-5 mx-2 text-uppercase fw-bold">Leaderboard</span>
+          <i class="fa fa-medal text-warning fs-3"></i>
+        </h3>
+        <ul
+          id="lbUserList"
+          class="list-unstyled list-group w-100"
+          id="expenseList"
+          style="font-size: 16px"
+        >
+          <li
+            class="list-group-item d-flex justify-content-between list-group-item-dark fs-5"
+          >
+            <span class="d-flex" style="width: 60%"
+              ><span style="width: 25%">Pos</span> <span>Name</span></span
+            >
+            <span>Total Expenses</span>
+          </li>
+          <!-- <h4
+            id="lbTotalExpense"
+            style="display: block"
+            class="text-center mt-5"
+          >
+            Add New Expenses Here!
+          </h4> -->
+        </ul>
+      </div>
+      <!-- LEADERBOARD END -->
+
+      <!-- TOTAL EXPENSE AMOUNT START -->
       <div
         class="container d-flex flex-column justify-content-center px-4"
         style="
@@ -158,6 +233,7 @@
           </div>
         </div>
       </div>
+      <!-- TOTAL EXPENSE AMOUNT START -->
     </div>
     <script src="expense.js"></script>
 

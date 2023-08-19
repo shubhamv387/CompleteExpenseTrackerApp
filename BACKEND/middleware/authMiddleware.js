@@ -2,23 +2,23 @@ const jwt = require("jsonwebtoken");
 const User = require("../model/User");
 require("dotenv").config();
 
-exports.authUser = (req, res, next) => {
+exports.authUser = async (req, res, next) => {
   // console.log(req.headers.authorization);
   let token = req.headers.authorization;
-
-  if (token) {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-
-    User.findAll({ where: { id: decoded.userId } })
-      .then((user) => {
-        req.user = user[0];
-        // console.log(req.user);
-        next();
-      })
-      .catch((error) => {
-        res.status(401).json({ message: "Not authorized, invalid token" });
-      });
-  } else {
-    res.status(401).json({ message: "Not authorized, no token" });
+  try {
+    if (token) {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+      const user = await User.findAll({ where: { id: decoded.userId } });
+      req.user = user[0];
+      next();
+    } else {
+      res
+        .status(401)
+        .json({ status: "Failed", message: "Not authorized, no token" });
+    }
+  } catch (error) {
+    res
+      .status(401)
+      .json({ status: "Failed", message: "Not authorized, invalid token" });
   }
 };

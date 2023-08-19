@@ -57,6 +57,7 @@ exports.updateTrnasectionStatus = async (req, res, next) => {
     Promise.all([updatedOrder, updatedUser])
       .then(() => {
         return res.status(200).json({
+          userName: updatedUser.name,
           success: true,
           message: "Transection successfull",
         });
