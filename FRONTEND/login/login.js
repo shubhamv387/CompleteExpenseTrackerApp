@@ -113,5 +113,3 @@ async function getResetPasswordEmail(e) {
     console.log(error.response.data.message);
   }
 }
-
-//

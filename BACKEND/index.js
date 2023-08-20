@@ -13,6 +13,7 @@ const orderRouter = require("./router/order");
 const User = require("./model/User");
 const Expenses = require("./model/Expense");
 const Order = require("./model/Order");
+const ForgotPasswordRequest = require("./model/ForgotPasswordRequests");
 
 const app = express();
 
@@ -20,7 +21,7 @@ app.use(cors());
 
 app.use(cookieParser());
 
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use("/user", userRouter);
@@ -36,6 +37,12 @@ Expenses.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
 
 User.hasMany(Order);
 Order.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
+
+User.hasMany(ForgotPasswordRequest);
+ForgotPasswordRequest.belongsTo(User, {
+  constraints: true,
+  onDelete: "CASCADE",
+});
 
 sequelize
   // .sync({ force: true })

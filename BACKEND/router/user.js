@@ -25,9 +25,11 @@ router
 
 router.post("/password/forgotpassword", userController.resetForgotPassword);
 
+router.get("/password/resetpassword/:id", userController.createNewPassword);
+
 router.post(
-  "/password/createnewpassword/:id/:token",
-  userController.createNewPassword
+  "/password/resetpassword/:id",
+  userController.PostCreateNewPassword
 );
 
 module.exports = router;
