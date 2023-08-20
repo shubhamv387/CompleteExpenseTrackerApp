@@ -207,10 +207,9 @@ function showOnReload() {
         if (!expenses.data.isPremium) {
           document.getElementById("getpremium").style.display = "block";
           document.getElementById("expenseList").style.marginBottom = "100px";
-          document.getElementById("lbUserList").parentNode.remove();
+          document.getElementById("lbUserList").style.display = "none";
         } else {
           leaderBoardFeature();
-
           document.getElementById("premiumUserText").innerText = `Hey ${
             expenses.data.userName.split(" ")[0]
           }, You Are A Premium User`;
@@ -260,6 +259,7 @@ function leaderBoardFeature() {
 
       const lbUserList = document.createElement("ul");
       lbUserList.className = "list-unstyled list-group w-100";
+
       lbUserList.setAttribute("id", "lbUserList");
       lbUserList.innerHTML = `<li
       class="list-group-item d-flex justify-content-between list-group-item-dark fs-6 fw-bold">
@@ -354,7 +354,6 @@ function purchasePremiumService(e) {
 
       // Handle payment failure
       rzp1.on("payment.failed", function (response) {
-        console.log(response);
         axios
           .post(
             "http://localhost:3000/order/updatetrnasectionstatus",

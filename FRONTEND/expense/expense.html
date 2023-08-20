@@ -21,6 +21,21 @@
         opacity: 100% !important;
         transform: translateY(58%) !important;
       }
+      /* Scroll Bar Start */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-thumb {
+        border-radius: 0.5rem;
+        background-color: #041a00;
+        border: 1px solid transparent;
+        background-clip: content-box;
+      }
+
+      ::-webkit-scrollbar-track {
+        background-color: #ffffff !important;
+      }
+      /* Scroll Bar End */
     </style>
   </head>
   <body>
@@ -65,7 +80,7 @@
     <!-- HEADER START -->
 
     <div class="position-relative d-flex flex-column justify-content-center">
-      <!-- EXPENSE FORM START -->
+      <!-- EXPENSE-FORM START -->
       <div class="container d-flex p-4 pb-0" style="max-width: 650px">
         <div class="form-control pt-2 px-4 pb-4" style="background: #f2f2f2">
           <form id="form-submit">
@@ -119,7 +134,7 @@
           </form>
         </div>
       </div>
-      <!-- EXPENSE FORM END -->
+      <!-- EXPENSE-FORM END -->
 
       <!-- IS PREMIUM USER START -->
       <div
@@ -154,10 +169,13 @@
           class="text-white d-flex justify-content-center align-items-center text-center form-control mb-1 text-capitalize w-100 bg-dark"
         >
           <p class="mb-0 fs-5">Your All Expenses</p>
-          <!-- <i class="fa fa-crown text-warning fs-3"></i> -->
         </h3>
 
-        <ul class="list-unstyled list-group w-100" id="expenseList">
+        <ul
+          class="list-unstyled list-group w-100 overflow-scroll"
+          style="max-height: 44vh; width: calc(100% + 7px) !important"
+          id="expenseList"
+        >
           <h4
             id="loadingExpense"
             style="display: none"
@@ -220,7 +238,7 @@
     </div>
     <script src="expense.js"></script>
 
-    <!-- <script src="https://checkout.razorpay.com/v1/checkout.js"></script> -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
   </body>

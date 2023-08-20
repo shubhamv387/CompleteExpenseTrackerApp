@@ -2,6 +2,9 @@ const Expense = require("../model/Expense");
 const User = require("../model/User");
 const sequelize = require("../utils/database");
 
+// @desc    getting all expenses
+// @route   GET /expense/
+// @access  Private
 exports.getAllExpenses = async (req, res, next) => {
   try {
     const expenses = await req.user.getExpenses();
@@ -16,11 +19,118 @@ exports.getAllExpenses = async (req, res, next) => {
   }
 };
 
+// @desc    Add New Expense
+// @route   POST /expense/add-expense
+// @access  Private
+exports.addExpense = async (req, res, next) => {
+  const { amount, description, category } = req.body;
+  const t = await sequelize.transaction();
+  try {
+    const expense = await req.user.createExpense(
+      {
+        amount,
+        description,
+        category,
+      },
+      { transaction: t }
+    );
+    const user = await User.findOne(
+      { where: { id: req.user.id } },
+      { transaction: t }
+    );
+    let newTotal = user.allExpenses + amount;
+
+    await user.update({ allExpenses: newTotal }, { transaction: t });
+    await t.commit();
+    res.status(200).json({ expense, isPremium: user.isPremium });
+  } catch (error) {
+    await t.rollback();
+    console.log(error);
+    return res.status(400).json({ Error: "Something Wrong", error });
+  }
+};
+
+// @desc    Edit An Expense
+// @route   PUT /expense/edit-expense/:id
+// @access  Private
+exports.editExpense = async (req, res, next) => {
+  const { id } = req.params;
+  const { amount, description, category } = req.body;
+  const t = await sequelize.transaction();
+
+  try {
+    const exp = await Expense.findOne({ where: { id } }, { transaction: t });
+    const user = await User.findOne(
+      { where: { id: req.user.id } },
+      { transaction: t }
+    );
+
+    let newTotal = user.allExpenses - exp.amount + +amount;
+    await User.update(
+      { allExpenses: newTotal },
+      { where: { id: req.user.id } },
+      { transaction: t }
+    );
+
+    await Expense.update(
+      { amount, description, category },
+      { where: { id: id } },
+      { transaction: t }
+    );
+
+    await t.commit();
+    return res.status(200).json({
+      id,
+      amount,
+      description,
+      category,
+      isPremium: user.isPremium,
+    });
+  } catch (error) {
+    await t.rollback();
+    console.log(error);
+    return res.status(400).json({ Error: "Something Wrong", error });
+  }
+};
+
+// @desc    Delete An Expense
+// @route   DELETE /expense/delete-expense/:id
+// @access  Private
+exports.deleteExpense = async (req, res, next) => {
+  const { id } = req.params;
+  const t = await sequelize.transaction();
+  try {
+    const expense = await Expense.findOne(
+      { where: { id } },
+      { transaction: t }
+    );
+    const user = await User.findOne(
+      { where: { id: req.user.id } },
+      { transaction: t }
+    );
+
+    let newTotal = user.allExpenses - expense.amount;
+    if (newTotal < 0) newTotal = 0;
+    const updateUser = await user.update(
+      { allExpenses: newTotal },
+      { transaction: t }
+    );
+    await expense.destroy({ transaction: t });
+
+    await t.commit();
+    return res.status(200).json({ expense, isPremium: updateUser.isPremium });
+  } catch (error) {
+    await t.rollback();
+    console.log(error);
+    return res.status(400).json({ Error: "Something Wrong", error });
+  }
+};
+
+// @desc    Getting All LB Users List
+// @route   GET /expense/lb-users-expenses
+// @access  Private
 exports.getLbUsersExpenses = async (req, res, next) => {
   try {
-    // let allUsers = await User.findAll({ attributes: ["id", "name"] });
-    // console.log(allUsers[0].id, allUsers[0].name);
-
     const users = await User.findAll({
       attributes: ["id", "name", "allExpenses"],
       order: [["allExpenses", "DESC"]],
@@ -36,94 +146,20 @@ exports.getLbUsersExpenses = async (req, res, next) => {
   }
 };
 
-exports.updatedLbUsers = async (req, res, next) => {
-  try {
-    const user = await User.findOne({
-      where: { id: req.user.id },
-      attributes: ["id", "name", "allExpenses"],
-      order: [["allExpenses", "DESC"]],
-    });
+// exports.updatedLbUsers = async (req, res, next) => {
+//   try {
+//     const user = await User.findOne({
+//       where: { id: req.user.id },
+//       attributes: ["id", "name", "allExpenses"],
+//       order: [["allExpenses", "DESC"]],
+//     });
 
-    return res.json({
-      status: "Success",
-      user: user,
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(400).json({ Error: "Something Wrong", error });
-  }
-};
-
-exports.addExpense = async (req, res, next) => {
-  const { amount, description, category } = req.body;
-  try {
-    const expense = await req.user.createExpense({
-      amount,
-      description,
-      category,
-    });
-    const user = await User.findOne({ where: { id: req.user.id } });
-    let newTotal = user.allExpenses + amount;
-    await user.update({ allExpenses: newTotal });
-    // console.log(user.allExpenses);
-    Promise.all([expense, user]).then(() =>
-      res.status(200).json({ expense, isPremium: user.isPremium })
-    );
-  } catch (error) {
-    console.log(error);
-    return res.status(400).json({ Error: "Something Wrong", error });
-  }
-};
-
-exports.editExpense = async (req, res, next) => {
-  const { id } = req.params;
-  const { amount, description, category } = req.body;
-
-  try {
-    const exp = await Expense.findOne({ where: { id } });
-    const user = await User.findOne({ where: { id: req.user.id } });
-
-    let newTotal = user.allExpenses - exp.amount + +amount;
-    // console.log(newTotal);
-    const updateUser = await User.update(
-      { allExpenses: newTotal },
-      { where: { id: req.user.id } }
-    );
-
-    const updateExpense = await Expense.update(
-      { amount, description, category },
-      { where: { id: id } }
-    );
-
-    Promise.all([exp, user, updateUser, updateExpense]).then(async () => {
-      return res.status(200).json({
-        id,
-        amount,
-        description,
-        category,
-        isPremium: user.isPremium,
-      });
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(400).json({ Error: "Something Wrong", error });
-  }
-};
-
-exports.deleteExpense = async (req, res, next) => {
-  const { id } = req.params;
-  try {
-    const expense = await Expense.findOne({ where: { id } });
-    const user = await User.findOne({ where: { id: req.user.id } });
-
-    let newTotal = user.allExpenses - expense.amount;
-    const updateUser = await user.update({ allExpenses: newTotal });
-    const deleteExpense = await expense.destroy();
-    Promise.all([expense, user, updateUser, deleteExpense]).then(() => {
-      return res.status(200).json({ expense, isPremium: updateUser.isPremium });
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(400).json({ Error: "Something Wrong", error });
-  }
-};
+//     return res.json({
+//       status: "Success",
+//       user: user,
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     return res.status(400).json({ Error: "Something Wrong", error });
+//   }
+// };

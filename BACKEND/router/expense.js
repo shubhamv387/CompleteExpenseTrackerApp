@@ -14,12 +14,12 @@ router.get(
   expenseController.getLbUsersExpenses
 );
 
-router.get(
-  "/updated-lb-users",
-  authMiddleware.authUser,
-  isPremium.isPremiumUser,
-  expenseController.updatedLbUsers
-);
+// router.get(
+//   "/updated-lb-users",
+//   authMiddleware.authUser,
+//   isPremium.isPremiumUser,
+//   expenseController.updatedLbUsers
+// );
 
 router.post(
   "/add-expense",

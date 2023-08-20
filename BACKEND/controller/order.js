@@ -1,6 +1,7 @@
 require("dotenv").config();
 const Razorpay = require("razorpay");
 const Order = require("../model/order.js");
+const sequelize = require("../utils/database");
 
 exports.purchasepremium = async (req, res) => {
   try {
@@ -10,18 +11,12 @@ exports.purchasepremium = async (req, res) => {
     });
     const amount = 2500;
 
-    rzp.orders.create({ amount, currency: "INR" }, (err, order) => {
+    rzp.orders.create({ amount, currency: "INR" }, async (err, order) => {
       if (err) {
         throw new Error(JSON.stringify(err));
       }
-      req.user
-        .createOrder({ orderId: order.id, status: "PENDING" })
-        .then(() => {
-          return res.status(201).json({ order, key_id: rzp.key_id });
-        })
-        .catch((err) => {
-          throw new Error(err);
-        });
+      await req.user.createOrder({ orderId: order.id, status: "PENDING" });
+      return res.status(201).json({ order, key_id: rzp.key_id });
     });
   } catch (err) {
     console.log(err);
@@ -38,32 +33,42 @@ exports.updateTrnasectionStatus = async (req, res, next) => {
     ? req.body.error.metadata.order_id
     : req.body.order_id;
 
+  const t = await sequelize.transaction();
+
   try {
-    const order = await Order.findOne({ where: { orderId: order_id } });
+    const order = await Order.findOne(
+      { where: { orderId: order_id } },
+      { transaction: t }
+    );
 
     if (req.body.error) {
-      await order.update({ paymentId: payment_id, status: "FAILED" });
+      await order.update(
+        { paymentId: payment_id, status: "FAILED" },
+        { transaction: t }
+      );
+      await t.commit();
       return res
         .status(200)
         .json({ success: false, message: "Transection Failed" });
     }
 
-    const updatedOrder = await order.update({
-      paymentId: payment_id,
-      status: "SUCCESSFULL",
-    });
-    const updatedUser = await req.user.update({ isPremium: true });
+    await order.update(
+      { paymentId: payment_id, status: "SUCCESSFULL" },
+      { transaction: t }
+    );
+    const updatedUser = await req.user.update(
+      { isPremium: true },
+      { transaction: t }
+    );
 
-    Promise.all([updatedOrder, updatedUser])
-      .then(() => {
-        return res.status(200).json({
-          userName: updatedUser.name,
-          success: true,
-          message: "Transection successfull",
-        });
-      })
-      .catch((err) => console.log({ Error: "Promise.all Failed", err }));
+    await t.commit();
+    return res.status(200).json({
+      userName: updatedUser.name,
+      success: true,
+      message: "Transection successfull",
+    });
   } catch (error) {
+    await t.rollback();
     console.log(err);
   }
 };
