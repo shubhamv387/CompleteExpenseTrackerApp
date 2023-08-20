@@ -21,39 +21,32 @@ exports.getLbUsersExpenses = async (req, res, next) => {
     // let allUsers = await User.findAll({ attributes: ["id", "name"] });
     // console.log(allUsers[0].id, allUsers[0].name);
 
-    const newusers = await User.findAll({
-      attributes: ["name", "allExpenses"],
+    const users = await User.findAll({
+      attributes: ["id", "name", "allExpenses"],
       order: [["allExpenses", "DESC"]],
     });
 
-    console.log(newusers);
-
-    const users = await User.findAll({
-      attributes: [
-        "id",
-        "name",
-        [sequelize.fn("sum", sequelize.col("expenses.amount")), "totalCost"],
-      ],
-      include: {
-        model: Expense,
-        attributes: [],
-      },
-      group: ["user.id"],
-      order: [["totalCost", "DESC"]],
+    return res.json({
+      status: "Success",
+      users: users,
     });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({ Error: "Something Wrong", error });
+  }
+};
 
-    let userTotalExpenses = [];
-
-    for (const user of users) {
-      userTotalExpenses.push({
-        name: user.name,
-        totalExpense: user.dataValues.totalCost,
-      });
-    }
+exports.updatedLbUsers = async (req, res, next) => {
+  try {
+    const user = await User.findOne({
+      where: { id: req.user.id },
+      attributes: ["id", "name", "allExpenses"],
+      order: [["allExpenses", "DESC"]],
+    });
 
     return res.json({
       status: "Success",
-      users: [...newusers],
+      user: user,
     });
   } catch (error) {
     console.log(error);
@@ -73,7 +66,9 @@ exports.addExpense = async (req, res, next) => {
     let newTotal = user.allExpenses + amount;
     await user.update({ allExpenses: newTotal });
     // console.log(user.allExpenses);
-    Promise.all([expense, user]).then(() => res.status(200).json(expense));
+    Promise.all([expense, user]).then(() =>
+      res.status(200).json({ expense, isPremium: user.isPremium })
+    );
   } catch (error) {
     console.log(error);
     return res.status(400).json({ Error: "Something Wrong", error });
@@ -91,7 +86,7 @@ exports.editExpense = async (req, res, next) => {
     let newTotal = user.allExpenses - exp.amount + +amount;
     // console.log(newTotal);
     const updateUser = await User.update(
-      { phone: 98654123, allExpenses: newTotal },
+      { allExpenses: newTotal },
       { where: { id: req.user.id } }
     );
 
@@ -101,7 +96,13 @@ exports.editExpense = async (req, res, next) => {
     );
 
     Promise.all([exp, user, updateUser, updateExpense]).then(async () => {
-      return res.status(200).json({ id, amount, description, category });
+      return res.status(200).json({
+        id,
+        amount,
+        description,
+        category,
+        isPremium: user.isPremium,
+      });
     });
   } catch (error) {
     console.log(error);
@@ -119,7 +120,7 @@ exports.deleteExpense = async (req, res, next) => {
     const updateUser = await user.update({ allExpenses: newTotal });
     const deleteExpense = await expense.destroy();
     Promise.all([expense, user, updateUser, deleteExpense]).then(() => {
-      return res.status(200).json(expense);
+      return res.status(200).json({ expense, isPremium: updateUser.isPremium });
     });
   } catch (error) {
     console.log(error);

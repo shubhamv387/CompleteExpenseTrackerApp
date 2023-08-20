@@ -37,20 +37,13 @@ form.addEventListener("submit", (e) => {
     })
     .then((res) => {
       // adding each expense in the Expenselist
-      showExpensesOnScreen(res.data);
+      showExpensesOnScreen(res.data.expense);
       showTotalExpense.innerText = rupee.format(totalPrice);
+
+      return res.data;
     })
-    .then(() => {
-      const lbUserList = document.getElementById("lbUserList");
-
-      const userArray = Array.from(lbUserList.children);
-
-      let i = 1;
-      while (i < userArray.length) {
-        lbUserList.removeChild(lbUserList.lastElementChild);
-        i++;
-      }
-      leaderBoardFeature();
+    .then((addedExpense) => {
+      if (addedExpense.isPremium) showUpdatedLb();
     })
     .catch((err) => console.log(err.message));
 
@@ -113,7 +106,6 @@ function showExpensesOnScreen(ExpenseObj) {
     document.getElementById("updateBtn").onclick = editedExpense;
 
     function editedExpense() {
-      newAmount = parseFloat(document.getElementById("amount").value);
       let updatedExpense = {
         amount: document.getElementById("amount").value,
         description: document.getElementById("description").value,
@@ -162,17 +154,11 @@ function showExpensesOnScreen(ExpenseObj) {
             document.getElementById("amount").value = "";
             document.getElementById("description").value = "";
             document.getElementById("category").value = "";
-          })
-          .then(() => {
-            const lbUserList = document.getElementById("lbUserList");
-            const userArray = Array.from(lbUserList.children);
 
-            let i = 1;
-            while (i < userArray.length) {
-              lbUserList.removeChild(lbUserList.lastElementChild);
-              i++;
-            }
-            leaderBoardFeature();
+            return updatedExpense.data;
+          })
+          .then((updatedExpense) => {
+            if (updatedExpense.isPremium) showUpdatedLb();
           })
           .catch((err) => console.log(err.message, err.response.data));
       }
@@ -189,7 +175,7 @@ function showExpensesOnScreen(ExpenseObj) {
       })
       .then((deletedExpense) => {
         let showTotalExpense = document.getElementById("totalExpense");
-        totalPrice -= parseFloat(deletedExpense.data.amount);
+        totalPrice -= parseFloat(deletedExpense.data.expense.amount);
         showTotalExpense.innerText = rupee.format(totalPrice);
         expenseList.removeChild(expense);
 
@@ -197,18 +183,10 @@ function showExpensesOnScreen(ExpenseObj) {
           loadingExpense.innerHTML = "Add New Expenses Here!";
           loadingExpense.style.display = "block";
         }
+        return deletedExpense.data;
       })
-      .then(() => {
-        const lbUserList = document.getElementById("lbUserList");
-
-        const userArray = Array.from(lbUserList.children);
-
-        let i = 1;
-        while (i < userArray.length) {
-          lbUserList.removeChild(lbUserList.lastElementChild);
-          i++;
-        }
-        leaderBoardFeature();
+      .then((deletedExpense) => {
+        if (deletedExpense.isPremium) showUpdatedLb();
       })
       .catch((err) => console.log(err.message));
   }
@@ -226,12 +204,10 @@ function showOnReload() {
         headers: { Authorization: token },
       })
       .then((expenses) => {
-        const lbDisplay = document.getElementById("lbDisplay");
-
         if (!expenses.data.isPremium) {
           document.getElementById("getpremium").style.display = "block";
           document.getElementById("expenseList").style.marginBottom = "100px";
-          lbDisplay.style.display = "none !important";
+          document.getElementById("lbUserList").parentNode.remove();
         } else {
           leaderBoardFeature();
 
@@ -271,31 +247,73 @@ function showOnReload() {
   }, 800);
 }
 
+/* LEADERBOARD FEATURES START */
 function leaderBoardFeature() {
-  /* LEADERBOARD FEATURES START */
-  const lbUserList = document.getElementById("lbUserList");
   axios
     .get("http://localhost:3000/expense/lb-users-expenses", {
       headers: { Authorization: token },
     })
     .then((users) => {
-      // console.log(users);
+      // console.log(users.data);
+      //   const lbDisplay = document.getElementById("lbDisplay");
+      //   document.getElementById("lbUserList").remove();
+
+      //   const lbUserList = document.createElement("ul");
+      //   lbUserList.className = "list-unstyled list-group w-100";
+      //   lbUserList.setAttribute("id", "lbUserList");
+      //   lbUserList.innerHTML = `<li
+      //   class="list-group-item d-flex justify-content-between list-group-item-dark fs-6 fw-bold">
+      //     <span class="d-flex" style="width: 60%">
+      //       <span style="width: 25%">Pos</span>
+      //       <span>Name</span>
+      //     </span>
+      //     <span>Total Expenses</span>
+      // </li>`;
+      //   lbDisplay.appendChild(lbUserList);
 
       let i = 0;
       users.data.users.forEach((user) => {
         const lbUser = document.createElement("li");
         lbUser.className =
           "list-group-item d-flex justify-content-between align-items-center list-group-item-danger";
-        lbUser.innerHTML = `<span class="d-flex align-items-center" style="width: 75%"><span style="width: 20%">${(i += 1)}</span> <span>${
+        lbUser.innerHTML = `<span class="d-flex align-items-center" style="width: 75%"><span class='d-none'>${
+          user.id
+        }</span><span style="width: 20%">${(i += 1)}</span> <span>${
           user.name
         }</span></span> <span>${rupee.format(user.allExpenses)}</span>`;
         lbUserList.appendChild(lbUser);
       });
       lbDisplay.style.display = "block";
     })
-    .catch((err) => console.log(err.message, err.response.data));
+    .catch((err) => console.log(err.message));
+}
+/* LEADERBOARD FEATURES END */
 
-  /* LEADERBOARD FEATURES END */
+function showUpdatedLb() {
+  // console.log(userId);
+  const lbUserList = document.getElementById("lbUserList");
+  axios
+    .get("http://localhost:3000/expense/updated-lb-users", {
+      headers: { Authorization: token },
+    })
+    .then((user) => {
+      const userDetail = user.data.user;
+      let updatedLbUser;
+      let arrFromlbUserList = Array.from(lbUserList.children);
+
+      for (let i = 0; i < arrFromlbUserList.length; i++) {
+        if (
+          arrFromlbUserList[i].firstElementChild.firstElementChild.innerText ===
+          user.data.user.id.toString()
+        ) {
+          updatedLbUser = arrFromlbUserList[i];
+          break;
+        }
+      }
+      const updatedLbUserSpan = updatedLbUser.children[1];
+      updatedLbUserSpan.innerHTML = `${rupee.format(userDetail.allExpenses)}`;
+    })
+    .catch((err) => console.log(err.message, err.response.data));
 }
 
 const logout = document.getElementById("logout");
