@@ -43,7 +43,7 @@ form.addEventListener("submit", (e) => {
       return res.data;
     })
     .then((addedExpense) => {
-      if (addedExpense.isPremium) showUpdatedLb();
+      if (addedExpense.isPremium) leaderBoardFeature();
     })
     .catch((err) => console.log(err.message));
 
@@ -158,7 +158,7 @@ function showExpensesOnScreen(ExpenseObj) {
             return updatedExpense.data;
           })
           .then((updatedExpense) => {
-            if (updatedExpense.isPremium) showUpdatedLb();
+            if (updatedExpense.isPremium) leaderBoardFeature();
           })
           .catch((err) => console.log(err.message, err.response.data));
       }
@@ -186,7 +186,7 @@ function showExpensesOnScreen(ExpenseObj) {
         return deletedExpense.data;
       })
       .then((deletedExpense) => {
-        if (deletedExpense.isPremium) showUpdatedLb();
+        if (deletedExpense.isPremium) leaderBoardFeature();
       })
       .catch((err) => console.log(err.message));
   }
@@ -255,21 +255,21 @@ function leaderBoardFeature() {
     })
     .then((users) => {
       // console.log(users.data);
-      //   const lbDisplay = document.getElementById("lbDisplay");
-      //   document.getElementById("lbUserList").remove();
+      const lbDisplay = document.getElementById("lbDisplay");
+      document.getElementById("lbUserList").remove();
 
-      //   const lbUserList = document.createElement("ul");
-      //   lbUserList.className = "list-unstyled list-group w-100";
-      //   lbUserList.setAttribute("id", "lbUserList");
-      //   lbUserList.innerHTML = `<li
-      //   class="list-group-item d-flex justify-content-between list-group-item-dark fs-6 fw-bold">
-      //     <span class="d-flex" style="width: 60%">
-      //       <span style="width: 25%">Pos</span>
-      //       <span>Name</span>
-      //     </span>
-      //     <span>Total Expenses</span>
-      // </li>`;
-      //   lbDisplay.appendChild(lbUserList);
+      const lbUserList = document.createElement("ul");
+      lbUserList.className = "list-unstyled list-group w-100";
+      lbUserList.setAttribute("id", "lbUserList");
+      lbUserList.innerHTML = `<li
+      class="list-group-item d-flex justify-content-between list-group-item-dark fs-6 fw-bold">
+        <span class="d-flex" style="width: 60%">
+          <span style="width: 25%">Pos</span>
+          <span>Name</span>
+        </span>
+        <span>Total Expenses</span>
+    </li>`;
+      lbDisplay.appendChild(lbUserList);
 
       let i = 0;
       users.data.users.forEach((user) => {
@@ -288,33 +288,6 @@ function leaderBoardFeature() {
     .catch((err) => console.log(err.message));
 }
 /* LEADERBOARD FEATURES END */
-
-function showUpdatedLb() {
-  // console.log(userId);
-  const lbUserList = document.getElementById("lbUserList");
-  axios
-    .get("http://localhost:3000/expense/updated-lb-users", {
-      headers: { Authorization: token },
-    })
-    .then((user) => {
-      const userDetail = user.data.user;
-      let updatedLbUser;
-      let arrFromlbUserList = Array.from(lbUserList.children);
-
-      for (let i = 0; i < arrFromlbUserList.length; i++) {
-        if (
-          arrFromlbUserList[i].firstElementChild.firstElementChild.innerText ===
-          user.data.user.id.toString()
-        ) {
-          updatedLbUser = arrFromlbUserList[i];
-          break;
-        }
-      }
-      const updatedLbUserSpan = updatedLbUser.children[1];
-      updatedLbUserSpan.innerHTML = `${rupee.format(userDetail.allExpenses)}`;
-    })
-    .catch((err) => console.log(err.message, err.response.data));
-}
 
 const logout = document.getElementById("logout");
 logout.addEventListener("click", () => {
