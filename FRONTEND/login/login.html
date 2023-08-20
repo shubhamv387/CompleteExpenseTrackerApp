@@ -13,9 +13,23 @@
     />
   </head>
   <body>
-    <h1 class="text-center mb-4 p-2 bg-dark text-white pb-3">Login Now!</h1>
-    <div class="container d-flex p-4 pb-0" style="max-width: 650px">
-      <div class="form-control p-3 px-4" style="background: #f2f2f2">
+    <h1
+      id="pageTitle"
+      class="text-center fs-2 mb-4 p-2 bg-dark text-white pb-3"
+    >
+      Login Now!
+    </h1>
+    <div
+      id="forgotPassDiv"
+      class="container d-flex p-4 pb-0"
+      style="max-width: 650px"
+    >
+      <!-- LOGIN FORM -->
+      <div
+        id="loginDiv"
+        class="form-control p-3 px-4"
+        style="background: #f2f2f2"
+      >
         <form id="form-submit">
           <label class="form-label mt-2 mb-1" for="email">Email Address:</label>
           <input
@@ -34,15 +48,22 @@
             id="password"
           />
 
+          <p class="mt-2 mb-0">
+            <a id="forgotPassBtn" class="text-primary fw-bold" href="#"
+              >Forgot Password?</a
+            >
+          </p>
+
           <input type="submit" value="LOG IN" class="btn btn-success mt-3" />
         </form>
-        <p class="mt-2">
+        <p class="mt-2 mb-0">
           Don't have an account?
           <a class="text-primary fw-bold" href="../signup/signup.html"
             >Register Now!</a
           >
         </p>
       </div>
+      <!-- FORGOT PASSWORD FORM -->
     </div>
 
     <div class="container d-flex p-4 pb-0" style="max-width: 650px">

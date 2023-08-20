@@ -23,4 +23,11 @@ router
   .get(authMiddleware.authUser, userController.getUserProfile)
   .put(authMiddleware.authUser, userController.updateUserProfile);
 
+router.post("/password/forgotpassword", userController.resetForgotPassword);
+
+router.post(
+  "/password/createnewpassword/:id/:token",
+  userController.createNewPassword
+);
+
 module.exports = router;

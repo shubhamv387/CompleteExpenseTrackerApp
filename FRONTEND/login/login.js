@@ -40,3 +40,78 @@ form.addEventListener("submit", (e) => {
     })
     .catch((err) => console.log(err.message));
 });
+
+const loginDiv = document.getElementById("loginDiv");
+const pageTitle = document.getElementById("pageTitle");
+
+const resetPasswordDiv = document.getElementById("resetPasswordDiv");
+const forgotPassDiv = document.getElementById("forgotPassDiv");
+const forgotPassBtn = document.getElementById("forgotPassBtn");
+
+forgotPassBtn.addEventListener("click", () => {
+  loginDiv.remove();
+  pageTitle.innerText = "Password reset request";
+  const resetPasswordDiv = document.createElement("div");
+  resetPasswordDiv.className = "form-control p-3 px-4";
+  resetPasswordDiv.style.background = "#f2f2f2";
+  resetPasswordDiv.innerHTML = `<form id="resetPasswordForm">
+    <label class="form-label mt-2 mb-1" for="emailForResetPass"
+      >Email Address:</label>
+    <input
+      required
+      class="form-control"
+      type="email"
+      name="emailForResetPass"
+      id="emailForResetPass"
+      placeholder="Registered email address..." />
+
+    <input type="submit" value="Request" class="btn btn-success mt-3" />
+  </form>
+  <p class="mt-2 mb-0"><a id="" class="text-primary fw-bold" href="../login/login.html">Return to login</a></p>`;
+  forgotPassDiv.appendChild(resetPasswordDiv);
+  const resetPasswordForm = document.getElementById("resetPasswordForm");
+  resetPasswordForm.addEventListener("submit", getResetPasswordEmail);
+});
+
+async function getResetPasswordEmail(e) {
+  e.preventDefault();
+
+  const emailForResetPass = document.getElementById("emailForResetPass");
+
+  const msg = document.getElementById("msg");
+
+  try {
+    const response = await axios.post(
+      "http://localhost:3000/user/password/forgotpassword",
+      {
+        email: emailForResetPass.value,
+      }
+    );
+    // alert("An email has been sent to your mailbox.");
+    emailForResetPass.value = "";
+
+    msg.className = "bg-success text-white p-1 px-2";
+    msg.innerHTML = "An email has been sent to your mailbox.";
+    msg.style.display = "block";
+
+    // Remove msg after 5 seconds and redirect
+    setTimeout(() => {
+      msg.style.display = "none";
+      msg.innerHTML = "";
+      window.location.replace("../login/login.html");
+    }, 5000);
+  } catch (error) {
+    msg.className = "bg-danger text-white p-1 px-2";
+    msg.innerHTML = "Email does not exist!";
+    msg.style.display = "block";
+    // Remove msg after 2 seconds
+    setTimeout(() => {
+      msg.style.display = "none";
+      msg.innerHTML = "";
+    }, 2000);
+    emailForResetPass.value = "";
+    console.log(error.response.data.message);
+  }
+}
+
+//
