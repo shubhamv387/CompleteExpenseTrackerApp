@@ -6,13 +6,14 @@ const cookieParser = require("cookie-parser");
 
 //Routers
 const userRouter = require("./router/user");
+const userPasswordRouter = require("./router/userPassword");
 const expenseRouter = require("./router/expense");
 const orderRouter = require("./router/order");
 
 // Models
 const User = require("./model/User");
 const Expenses = require("./model/Expense");
-const Order = require("./model/Order");
+const Order = require("./model/order");
 const ForgotPasswordRequest = require("./model/ForgotPasswordRequests");
 
 const app = express();
@@ -25,6 +26,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use("/user", userRouter);
+app.use("/password", userPasswordRouter);
 app.use("/expense", expenseRouter);
 app.use("/order", orderRouter);
 

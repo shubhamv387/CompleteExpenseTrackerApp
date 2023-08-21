@@ -2,17 +2,13 @@ let rupee = new Intl.NumberFormat("en-IN", {
   style: "currency",
   currency: "INR",
 });
-
 let totalPrice = 0;
-
 const token = localStorage.getItem("token");
-
 const loadingExpense = document.getElementById("loadingExpense");
 
 window.addEventListener("DOMContentLoaded", showOnReload);
 
 const form = document.getElementById("form-submit");
-
 form.addEventListener("submit", (e) => {
   e.preventDefault();
 
@@ -237,11 +233,11 @@ function showOnReload() {
       })
       .catch((err) => {
         totalExpense.innerHTML = rupee.format(totalPrice);
-        loadingExpense.innerHTML = "No authorized, please login again!";
-        console.log(err.message, err.response.data);
+        console.log(err.message);
         setTimeout(() => {
           window.location.replace("../login/login.html");
         }, 1500);
+        loadingExpense.innerHTML = "Not authorized, please login again!";
       });
   }, 800);
 }
@@ -332,12 +328,12 @@ function purchasePremiumService(e) {
                 headers: { Authorization: token },
               }
             );
-            document.getElementById("getpremium").style.display = "none";
-            document.getElementById("premiumUser").style.display = "block";
-
             document.getElementById("premiumUserText").innerText = `Hey ${
               response.data.userName.split(" ")[0]
             }, You Are A Premium User`;
+            document.getElementById("getpremium").style.display = "none";
+            document.getElementById("premiumUser").style.display = "block";
+
             document.getElementById("expenseList").style.marginBottom = "0";
             leaderBoardFeature();
             alert("You are a Premium User Now!");

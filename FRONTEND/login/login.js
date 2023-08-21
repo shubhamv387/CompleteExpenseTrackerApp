@@ -45,7 +45,7 @@ const loginDiv = document.getElementById("loginDiv");
 const pageTitle = document.getElementById("pageTitle");
 
 const resetPasswordDiv = document.getElementById("resetPasswordDiv");
-const forgotPassDiv = document.getElementById("forgotPassDiv");
+const mainDiv = document.getElementById("mainDiv");
 const forgotPassBtn = document.getElementById("forgotPassBtn");
 
 forgotPassBtn.addEventListener("click", () => {
@@ -68,7 +68,7 @@ forgotPassBtn.addEventListener("click", () => {
     <input type="submit" value="Request" class="btn btn-success mt-3" />
   </form>
   <p class="mt-2 mb-0"><a id="" class="text-primary fw-bold" href="../login/login.html">Return to login</a></p>`;
-  forgotPassDiv.appendChild(resetPasswordDiv);
+  mainDiv.appendChild(resetPasswordDiv);
   const resetPasswordForm = document.getElementById("resetPasswordForm");
   resetPasswordForm.addEventListener("submit", getResetPasswordEmail);
 });
@@ -82,7 +82,7 @@ async function getResetPasswordEmail(e) {
 
   try {
     const response = await axios.post(
-      "http://localhost:3000/user/password/forgotpassword",
+      "http://localhost:3000/password/forgotpassword",
       {
         email: emailForResetPass.value,
       }

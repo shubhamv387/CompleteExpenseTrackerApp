@@ -33,9 +33,11 @@ exports.updateTrnasectionStatus = async (req, res, next) => {
     ? req.body.error.metadata.order_id
     : req.body.order_id;
 
-  const t = await sequelize.transaction();
+  let t;
 
   try {
+    t = await sequelize.transaction();
+
     const order = await Order.findOne(
       { where: { orderId: order_id } },
       { transaction: t }
@@ -52,18 +54,20 @@ exports.updateTrnasectionStatus = async (req, res, next) => {
         .json({ success: false, message: "Transection Failed" });
     }
 
-    await order.update(
+    const updatedOrder = order.update(
       { paymentId: payment_id, status: "SUCCESSFULL" },
       { transaction: t }
     );
-    const updatedUser = await req.user.update(
+
+    const updatedUser = req.user.update(
       { isPremium: true },
       { transaction: t }
     );
 
+    await Promise.all([updatedOrder, updatedUser]);
     await t.commit();
     return res.status(200).json({
-      userName: updatedUser.name,
+      userName: req.user.name,
       success: true,
       message: "Transection successfull",
     });
