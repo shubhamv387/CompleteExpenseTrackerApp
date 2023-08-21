@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Generate Report</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+
+    <style>
+      .profileShow {
+        opacity: 100% !important;
+        transform: translateY(58%) !important;
+      }
+      /* Scroll Bar Start */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-thumb {
+        border-radius: 0.5rem;
+        background-color: #041a00;
+        border: 1px solid transparent;
+        background-clip: content-box;
+      }
+
+      ::-webkit-scrollbar-track {
+        background-color: #ffffff !important;
+      }
+      /* Scroll Bar End */
+      table.form-control {
+        display: revert;
+      }
+      table tbody td,
+      table tbody th {
+        padding-block: 4px !important;
+        padding-inline: 5px !important;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- HEADER START -->
+    <div class="container-fluid bg-dark d-flex justify-content-center">
+      <div
+        class="container d-flex py-2 justify-content-between align-items-center"
+      >
+        <h1 class="d-inline p-2 fs-2 bg-dark text-white">
+          <a
+            class="text-white text-decoration-none"
+            href="../expense/expense.html"
+            >Expense Tracker</a
+          >
+        </h1>
+        <div class="col d-flex position-relative">
+          <i
+            id="profilePic"
+            class="fa-solid fa-user-large d-inline ms-auto fs-5 text-white rounded-circle border border-3 bg-dark border-white p-2"
+            style="cursor: pointer"
+          ></i>
+          <div
+            id="welcomeDiv"
+            class="col d-flex form-control flex-column position-absolute bg-light shadow"
+            style="
+              width: 200px;
+              right: 0;
+              z-index: 999;
+              transform: translateY(-120px);
+              opacity: 0;
+              overflow: hidden;
+              transition: 0.3s;
+            "
+          >
+            <p id="welcomeText" class="mb-2">Hello, User</p>
+            <button class="btn btn-danger w-100" id="logout">Log Out</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- HEADER END -->
+    <h3 class="text-center fw-bold mt-3">Finencial Year - 2023</h3>
+    <!-- GENERATE REPORT START -->
+    <!-- DAILY REPORT START -->
+    <div class="container table-responsive p-4 d-flex flex-column">
+      <h6 class="text-center fw-bold mb-2">August 2023</h6>
+      <table
+        class="table form-control p-0 w-100 table-bordered"
+        style="font-size: 14px"
+      >
+        <thead class="table-dark">
+          <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Discription</th>
+            <th scope="col">Caregory</th>
+            <th class="text-end" scope="col">Income</th>
+            <th class="text-end" scope="col">Expense</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">19-08-2023</th>
+            <td>Milk</td>
+            <td>Food</td>
+            <td></td>
+            <td class="text-end">60</td>
+          </tr>
+          <tr class="table-info">
+            <th scope="row"></th>
+            <td></td>
+            <td></td>
+            <td class="text-end">0</td>
+            <td class="text-end">60.00</td>
+          </tr>
+
+          <tr>
+            <th scope="row">20-08-2023</th>
+            <td>Salary</td>
+            <td>Salary</td>
+            <td class="text-end">40000</td>
+            <td></td>
+          </tr>
+          <tr>
+            <th scope="row">20-08-2023</th>
+            <td>Fruits</td>
+            <td>Fruits</td>
+            <td></td>
+            <td class="text-end">500</td>
+          </tr>
+          <tr>
+            <th scope="row">20-08-2023</th>
+            <td>Medicines</td>
+            <td>Health</td>
+            <td></td>
+            <td class="text-end">50</td>
+          </tr>
+          <tr class="table-info">
+            <th scope="row"></th>
+            <td></td>
+            <td></td>
+            <td class="text-end">40000</td>
+            <td class="text-end">550</td>
+          </tr>
+          <tr>
+            <th scope="row">21-08-2023</th>
+            <!-- <td colspan="2">Larry the Bird</td> -->
+            <td>Salary</td>
+            <td>Salary</td>
+            <td class="text-end">20000</td>
+            <td></td>
+          </tr>
+          <tr>
+            <th scope="row">21-08-2023</th>
+            <!-- <td colspan="2">Larry the Bird</td> -->
+            <td>Milk</td>
+            <td>Food</td>
+            <td></td>
+            <td class="text-end">60</td>
+          </tr>
+          <tr>
+            <th scope="row">21-08-2023</th>
+            <!-- <td colspan="2">Larry the Bird</td> -->
+            <td>Medicines</td>
+            <td>Health</td>
+            <td></td>
+            <td class="text-end">50</td>
+          </tr>
+          <tr>
+            <th scope="row">21-08-2023</th>
+            <!-- <td colspan="2">Larry the Bird</td> -->
+            <td>Fees</td>
+            <td>Education</td>
+            <td></td>
+            <td class="text-end">4000</td>
+          </tr>
+          <tr>
+            <th scope="row">21-08-2023</th>
+            <!-- <td colspan="2">Larry the Bird</td> -->
+            <td>Party</td>
+            <td>Birthday Treat</td>
+            <td></td>
+            <td class="text-end">500</td>
+          </tr>
+          <tr>
+            <th scope="row">21-08-2023</th>
+            <!-- <td colspan="2">Larry the Bird</td> -->
+            <td>Travel</td>
+            <td>Transportation</td>
+            <td></td>
+            <td class="text-end">500</td>
+          </tr>
+          <tr class="table-info text-end">
+            <th scope="row"></th>
+            <td></td>
+            <td></td>
+            <td>20000</td>
+            <td>5060</td>
+          </tr>
+          <tr class="table-primary text-end">
+            <td colspan="3">Total</td>
+            <td class="text-success fw-bold">Rs. 60,000.00</td>
+            <td class="text-danger fw-bold">Rs. 5,670.00</td>
+          </tr>
+          <tr class="table-info text-end">
+            <td colspan="3">Saving</td>
+            <td class="text-success fw-bold" colspan="2">Rs. 54,330</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <!-- DAILY REPORT END -->
+    <!-- MONTHLY REPORT START -->
+    <div class="container table-responsive p-4 d-flex flex-column">
+      <h6 class="text-center fw-bold mb-2">Yearly Report</h6>
+      <table
+        class="table form-control p-0 w-100 table-bordered"
+        style="font-size: 14px"
+      >
+        <thead class="table-dark">
+          <tr>
+            <th scope="col">Month</th>
+            <th class="text-end" scope="col">Income</th>
+            <th class="text-end" scope="col">Expense</th>
+            <th class="text-end" scope="col">Savings</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">August</th>
+            <td class="text-end">Rs. 60,000.00</td>
+            <td class="text-end">Rs. 5,670.00</td>
+            <td class="text-end">Rs. 54,330</td>
+          </tr>
+          <tr class="table-info fw-bold">
+            <td class="text-end" colspan="2">Total</td>
+            <td class="text-end text-success">Rs. 5,670.00</td>
+            <td class="text-end text-danger">Rs. 54,330</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <!-- MONTHLY REPORT END -->
+    <!-- GENERATE REPORT END -->
+    <!-- DOWNLOAD REPORT START -->
+    <div class="container p-4 pt-0 d-flex justify-content-center">
+      <button id="downloadReport" class="btn btn-primary">
+        DOWNLOAD REPORT
+      </button>
+    </div>
+    <!-- DOWNLOAD REPORT END -->
+
+    <script src="generateReport.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
+  </body>
+</html>
