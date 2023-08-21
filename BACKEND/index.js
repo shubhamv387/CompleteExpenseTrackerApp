@@ -15,6 +15,7 @@ const User = require("./model/User");
 const Expenses = require("./model/Expense");
 const Order = require("./model/order");
 const ForgotPasswordRequest = require("./model/ForgotPasswordRequests");
+const DownloadExpensesList = require("./model/DownloadedExpenseList");
 
 const app = express();
 
@@ -42,6 +43,12 @@ Order.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
 
 User.hasMany(ForgotPasswordRequest);
 ForgotPasswordRequest.belongsTo(User, {
+  constraints: true,
+  onDelete: "CASCADE",
+});
+
+User.hasMany(DownloadExpensesList);
+DownloadExpensesList.belongsTo(User, {
   constraints: true,
   onDelete: "CASCADE",
 });

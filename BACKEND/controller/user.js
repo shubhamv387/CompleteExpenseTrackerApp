@@ -1,7 +1,8 @@
 const User = require("../model/User");
+const DownloadExpensesList = require("../model/DownloadedExpenseList");
 const bcrypt = require("bcryptjs");
 const generateToken = require("../utils/generateToken");
-
+const { uploadeToS3 } = require("../services/S3Services");
 require("dotenv").config();
 
 // @desc    Get All Users
@@ -138,4 +139,50 @@ exports.updateUserProfile = async (req, res, next) => {
   } catch (error) {
     console.log(error);
   }
+};
+
+// @desc    Download user total expenses
+// @route   GET /user/downloadexpensesreport
+// @access  Private
+exports.downloadExpensesReport = async (req, res, next) => {
+  try {
+    const userExpenses = await req.user.getExpenses();
+    const fileName = `${req.user.id}/Expense${new Date().getTime()}.txt`;
+
+    const data = JSON.stringify(userExpenses);
+
+    const fileUrl = await uploadeToS3(data, fileName);
+
+    await DownloadExpensesList.create({
+      fileUrl: fileUrl,
+      userId: req.user.id,
+    });
+
+    // await req.user.createDownloadExpensesList({ fileUrl: fileUrl });
+
+    res.status(200).json({
+      success: true,
+      fileUrl,
+      message: "Download Successful",
+    });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ success: false, message: "Download Failed", err: error });
+  }
+};
+
+exports.getDownloadedExpenseList = async (req, res, next) => {
+  const DownloadedExpList = await DownloadExpensesList.findAll({
+    where: { userId: req.user.id },
+  });
+  // console.log(DownloadedExpList);
+  res
+    .status(200)
+    .json({
+      success: true,
+      message: "getting list",
+      expenseList: DownloadedExpList,
+    });
 };

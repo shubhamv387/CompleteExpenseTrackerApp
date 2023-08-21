@@ -8,7 +8,7 @@ exports.authUser = async (req, res, next) => {
   try {
     if (token) {
       const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-      const user = await User.findAll({
+      const user = await User.findOne({
         where: { id: decoded.userId },
         attributes: [
           "id",
@@ -19,15 +19,21 @@ exports.authUser = async (req, res, next) => {
           "allExpenses",
         ],
       });
-      req.user = user[0];
+      // console.log(user);
+      if (user) req.user = user;
+      else
+        return res.status(401).json({
+          status: "Failed",
+          message: "Not User Found, Please Login again",
+        });
       next();
     } else {
-      res
+      return res
         .status(401)
         .json({ status: "Failed", message: "Not authorized, no token" });
     }
   } catch (error) {
-    res
+    return res
       .status(401)
       .json({ status: "Failed", message: "Not authorized, invalid token" });
   }
