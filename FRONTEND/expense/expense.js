@@ -10,9 +10,22 @@ let rupee = new Intl.NumberFormat("en-IN", {
 let totalPrice = 0;
 const token = localStorage.getItem("token");
 const loadingExpense = document.getElementById("loadingExpense");
+let limit = 5;
+
+const expToShow = document.getElementById("expToShow");
+
+expToShow.addEventListener("change", () => {
+  while (expenseList.lastElementChild) {
+    expenseList.removeChild(expenseList.lastElementChild);
+  }
+  document.getElementById("paginationDiv").remove();
+  limit = document.getElementById("expToShow").value;
+  showOnReload(page, expToShow.value);
+});
 
 let page = 1;
-window.addEventListener("DOMContentLoaded", showOnReload(page));
+
+window.addEventListener("DOMContentLoaded", showOnReload(page, limit));
 
 const form = document.getElementById("form-submit");
 form.addEventListener("submit", (e) => {
@@ -39,7 +52,9 @@ form.addEventListener("submit", (e) => {
     })
     .then((res) => {
       // adding each expense in the Expenselist
+
       showExpensesOnScreen(res.data.expense);
+
       showTotalExpense.innerText = rupee.format(totalPrice);
 
       return res.data;
@@ -105,9 +120,9 @@ function showExpensesOnScreen(ExpenseObj) {
     document.getElementById("amount").focus();
 
     // Update button onclick event handler
-    document.getElementById("updateBtn").onclick = editedExpense;
+    document.getElementById("updateBtn").onclick = updateExpense;
 
-    function editedExpense() {
+    function updateExpense() {
       let updatedExpense = {
         amount: document.getElementById("amount").value,
         description: document.getElementById("description").value,
@@ -182,6 +197,7 @@ function showExpensesOnScreen(ExpenseObj) {
         expenseList.removeChild(expense);
 
         if (!expenseList.children[1]) {
+          document.getElementById("paginationDiv").remove();
           loadingExpense.innerHTML = "Add New Expenses Here!";
           loadingExpense.style.display = "block";
         }
@@ -194,32 +210,19 @@ function showExpensesOnScreen(ExpenseObj) {
   }
 }
 
-function showOnReload(page) {
+function showOnReload(page, limit) {
   // window.location.reload();
   const totalExpense = document.getElementById("totalExpense");
-
   loadingExpense.innerHTML = "Loding Expenses...";
   loadingExpense.style.display = "block";
 
   setTimeout(() => {
     axios
-      .get(`http://localhost:3000/expense?page=${page}`, {
+      .get(`http://localhost:3000/expense?page=${page}&limit=${limit}`, {
         headers: { Authorization: token },
       })
       .then(
         ({ data: { expenses, userName, isPremium, status, ...pageData } }) => {
-          if (!isPremium) {
-            document.getElementById("getpremium").style.display = "block";
-            document.getElementById("expenseList").style.marginBottom = "100px";
-            document.getElementById("lbUserList").style.display = "none";
-          } else {
-            leaderBoardFeature();
-            document.getElementById("premiumUserText").innerText = `Hey ${
-              userName.split(" ")[0]
-            }, You Are A Premium User`;
-            document.getElementById("premiumUser").style.display = "block";
-          }
-
           const welcomeText = document.getElementById("welcomeText");
           if (!expenses.length) {
             welcomeText.innerText = `Hello, ${userName.split(" ")[0]}`;
@@ -233,6 +236,18 @@ function showOnReload(page) {
               totalPrice += expense.amount;
             });
             showPagination(pageData);
+            if (!isPremium) {
+              document.getElementById("getpremium").style.display = "block";
+              document.getElementById("expenseList").style.marginBottom =
+                "100px";
+              document.getElementById("lbUserList").style.display = "none";
+            } else {
+              leaderBoardFeature();
+              document.getElementById("premiumUserText").innerText = `Hey ${
+                userName.split(" ")[0]
+              }, You Are A Premium User`;
+              document.getElementById("premiumUser").style.display = "block";
+            }
           }
           totalExpense.innerHTML = rupee.format(totalPrice);
         }
@@ -273,10 +288,11 @@ function showPagination({
         expenseList.removeChild(expenseList.lastElementChild);
       }
       document.getElementById("paginationDiv").remove();
-      showOnReload(previousPage);
+      showOnReload(previousPage, limit);
     });
     paginationDiv.appendChild(btn1);
   }
+
   const btn2 = document.createElement("button");
   btn2.className = "btn btn-primary mx-2";
   btn2.innerHTML = currentPage;
@@ -285,7 +301,7 @@ function showPagination({
       expenseList.removeChild(expenseList.lastElementChild);
     }
     document.getElementById("paginationDiv").remove();
-    showOnReload(currentPage);
+    showOnReload(currentPage, limit);
   });
   paginationDiv.appendChild(btn2);
 
@@ -298,24 +314,12 @@ function showPagination({
         expenseList.removeChild(expenseList.lastElementChild);
       }
       document.getElementById("paginationDiv").remove();
-      showOnReload(naxtPage);
+      showOnReload(naxtPage, limit);
     });
     paginationDiv.appendChild(btn3);
   }
   expenseListDiv.appendChild(paginationDiv);
   // console.log(expenseListDiv);
-}
-
-function getExpensesOnPagination(page) {
-  axios
-    .get(`http://localhost:3000/expense?page=${page}`, {
-      headers: { Authorization: token },
-    })
-    .then(
-      ({ data: { expenses, userName, isPremium, status, ...pageData } }) => {
-        console.log(expenses);
-      }
-    );
 }
 
 /* LEADERBOARD FEATURES START */
@@ -325,7 +329,6 @@ function leaderBoardFeature() {
       headers: { Authorization: token },
     })
     .then((users) => {
-      // console.log(users.data);
       const lbDisplay = document.getElementById("lbDisplay");
       document.getElementById("lbUserList").remove();
 

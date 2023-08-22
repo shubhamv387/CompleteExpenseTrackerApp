@@ -168,8 +168,25 @@
             class="text-white form-control mb-0 py-2 w-auto bg-dark"
             style="border-radius: 8px 8px 0 0"
           >
-            <p class="mb-0">Your All Expenses</p>
+            <p class="mb-0">
+              No. of Expenses to Show <i class="fa fa-arrow-right ms-2"></i>
+            </p>
           </h3>
+          <form id="paginationForm" class="mb-0 w-auto me-auto border-dark">
+            <select
+              class="form-select mb-0 py-2 w-auto ms-1 me-auto border-dark"
+              name="expToShow"
+              id="expToShow"
+            >
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+              <option value="20">20</option>
+              <option value="25">25</option>
+              <option value="30">30</option>
+            </select>
+          </form>
+
           <a
             href="./generateReport.html"
             class="btn btn-outline-dark w-auto mb-1 me-2"

@@ -5,12 +5,6 @@ const isPremium = require("../middleware/isPremium");
 
 const router = express.Router();
 
-router.get(
-  "/",
-  authMiddleware.authUser,
-  expenseController.getExpensePagination
-);
-
 // router.get(
 //   "/updated-lb-users",
 //   authMiddleware.authUser,
@@ -49,11 +43,24 @@ router.get(
   expenseController.generateReport
 );
 
-router.get(
-  "/expense?page=pagenumber",
+router.use(
+  "/",
   authMiddleware.authUser,
-  isPremium.isPremiumUser,
   expenseController.getExpensePagination
 );
+
+// router.use(
+//   "/expense?page=pagenumber",
+//   authMiddleware.authUser,
+//   isPremium.isPremiumUser,
+//   expenseController.getExpensePagination
+// );
+
+// router.post(
+//   "/expense?page=pagenumber",
+//   authMiddleware.authUser,
+//   isPremium.isPremiumUser,
+//   expenseController.getExpensePagination
+// );
 
 module.exports = router;

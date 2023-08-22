@@ -26,7 +26,7 @@ exports.generateReport = async (req, res, next) => {
   try {
     const expenses = await req.user.getExpenses({
       attributes: ["createdAt", "description", "category", "amount"],
-      order: [["id", "DESC"]],
+      order: [["createdAt", "DESC"]],
     });
     return res.json({
       userName: req.user.name,
@@ -171,14 +171,15 @@ exports.getLbUsersExpenses = async (req, res, next) => {
 // @access  Private
 exports.getExpensePagination = async (req, res, next) => {
   try {
-    console.log(req.query);
-    const ITEM_PER_PAGE = 4;
+    // console.log(req.query);
+    const ITEM_PER_PAGE = +req.query.limit || 4;
     const page = +req.query.page || 1;
     let totalExpenses = await Expense.count({ where: { userId: req.user.id } });
 
     const expenses = await req.user.getExpenses({
       offset: (page - 1) * ITEM_PER_PAGE,
       limit: ITEM_PER_PAGE,
+      order: [["createdAt", "DESC"]],
     });
 
     return res.json({
