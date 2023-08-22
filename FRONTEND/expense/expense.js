@@ -187,8 +187,12 @@ function showExpensesOnScreen(ExpenseObj) {
       .catch((err) => console.log(err.message));
   }
 }
-
+/* Reloading page after clicking back button */
+if (performance.navigation.type === 2) {
+  location.reload(true);
+}
 function showOnReload() {
+  // window.location.reload();
   const totalExpense = document.getElementById("totalExpense");
 
   loadingExpense.innerHTML = "Loding Expenses...";

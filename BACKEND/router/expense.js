@@ -8,6 +8,12 @@ const router = express.Router();
 router.get("/", authMiddleware.authUser, expenseController.getAllExpenses);
 
 router.get(
+  "/generatereport",
+  authMiddleware.authUser,
+  expenseController.generateReport
+);
+
+router.get(
   "/lb-users-expenses",
   authMiddleware.authUser,
   isPremium.isPremiumUser,

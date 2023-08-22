@@ -143,7 +143,7 @@ exports.updateUserProfile = async (req, res, next) => {
 
 // @desc    Download user total expenses
 // @route   GET /user/downloadexpensesreport
-// @access  Private
+// @access  Premium Users Only
 exports.downloadExpensesReport = async (req, res, next) => {
   try {
     const userExpenses = await req.user.getExpenses();
@@ -173,16 +173,18 @@ exports.downloadExpensesReport = async (req, res, next) => {
   }
 };
 
+// @desc    Previously download expense List
+// @route   GET /user/expense-report-downloaded-list
+// @access  Premium Users Only
 exports.getDownloadedExpenseList = async (req, res, next) => {
   const DownloadedExpList = await DownloadExpensesList.findAll({
     where: { userId: req.user.id },
+    order: [["createdAt", "DESC"]],
   });
   // console.log(DownloadedExpList);
-  res
-    .status(200)
-    .json({
-      success: true,
-      message: "getting list",
-      expenseList: DownloadedExpList,
-    });
+  res.status(200).json({
+    success: true,
+    message: "getting list",
+    expenseList: DownloadedExpList,
+  });
 };

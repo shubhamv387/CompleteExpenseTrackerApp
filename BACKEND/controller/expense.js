@@ -19,6 +19,24 @@ exports.getAllExpenses = async (req, res, next) => {
   }
 };
 
+// @desc    getting all expenses
+// @route   GET /expense/
+// @access  Private
+exports.generateReport = async (req, res, next) => {
+  try {
+    const expenses = await req.user.getExpenses({
+      attributes: ["createdAt", "description", "category", "amount"],
+      order: [["id", "DESC"]],
+    });
+    return res.json({
+      expenses,
+    });
+  } catch (error) {
+    console.log({ Error: "Something Wrong", error });
+    return res.status(400).json({ Error: "Something Wrong", error });
+  }
+};
+
 // @desc    Add New Expense
 // @route   POST /expense/add-expense
 // @access  Private

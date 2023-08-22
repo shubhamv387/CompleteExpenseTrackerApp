@@ -1,19 +1,52 @@
 const token = localStorage.getItem("token");
-
-const logout = document.getElementById("logout");
-logout.addEventListener("click", () => {
-  if (token) localStorage.setItem("token", "");
-  window.location.replace("../login/login.html");
+let rupee = new Intl.NumberFormat("en-IN", {
+  style: "currency",
+  currency: "INR",
 });
+let totalExpense = 0;
+// const logout = document.getElementById("logout");
+// logout.addEventListener("click", () => {
+//   if (token) localStorage.setItem("token", "");
+//   window.location.replace("../login/login.html");
+// });
 
-const profilePic = document.getElementById("profilePic");
-profilePic.addEventListener("click", () => {
-  const welcomeDiv = document.getElementById("welcomeDiv");
-  welcomeDiv.classList.toggle("profileShow");
-});
+// const profilePic = document.getElementById("profilePic");
+// profilePic.addEventListener("click", () => {
+//   const welcomeDiv = document.getElementById("welcomeDiv");
+//   welcomeDiv.classList.toggle("profileShow");
+// });
 
 window.addEventListener("DOMContentLoaded", async () => {
   try {
+    const userExpenseArray = await axios(
+      "http://localhost:3000/expense/generatereport",
+      {
+        headers: { Authorization: token },
+      }
+    );
+
+    const userExpenseList = userExpenseArray.data.expenses;
+
+    document.getElementById(
+      "fullReportYear"
+    ).innerText = `Full Report - ${new Date().getFullYear()}`;
+
+    const expenseTable = document.createElement("div");
+    expenseTable.className =
+      "container table-responsive p-4 pb-0 d-flex flex-column";
+
+    let table = document.querySelector("table");
+    let data = Object.keys(userExpenseList[0]);
+    generateTableHead(table, data);
+    generateTable(table, userExpenseList);
+    // console.log(totalExpense);
+
+    const total = document.createElement("h5");
+    total.className = "text-end mb-4 text-danger";
+    total.innerHTML = `Total Expenses = ${rupee.format(totalExpense)}`;
+    document.getElementById("tableDiv").appendChild(total);
+    /* DOWNLOAD REPORT START */
+
     const response = await axios(
       "http://localhost:3000/user/expense-report-downloaded-list",
       {
@@ -34,11 +67,10 @@ window.addEventListener("DOMContentLoaded", async () => {
 
     downloadReportDiv.appendChild(h3);
     const allExpensesList = response.data.expenseList;
-    console.log(allExpensesList);
 
     let i = 0;
     allExpensesList.forEach((expense) => {
-      console.log(expense);
+      // console.log(expense);
       const a = document.createElement("a");
       a.className = "list-group-item border-0 ps-0 pb-0 w-100";
       a.href = `${expense.fileUrl}`;
@@ -75,3 +107,49 @@ window.addEventListener("DOMContentLoaded", async () => {
     // window.location.replace("../login/login.html");
   }
 });
+
+let mountains = [
+  { name: "Monte Falco", height: 1658, place: "Parco Foreste Casentinesi" },
+  { name: "Monte Falterona", height: 1654, place: "Parco Foreste Casentinesi" },
+  { name: "Poggio Scali", height: 1520, place: "Parco Foreste Casentinesi" },
+  { name: "Pratomagno", height: 1592, place: "Parco Foreste Casentinesi" },
+  { name: "Monte Amiata", height: 1738, place: "Siena" },
+];
+
+function generateTableHead(table) {
+  let thead = table.createTHead();
+  let row = thead.insertRow();
+  let thData = ["Date", "Description", "Category", "Expense"];
+  for (let key of thData) {
+    let th = document.createElement("th");
+    let text = document.createTextNode(key);
+    th.appendChild(text);
+    row.appendChild(th);
+  }
+}
+
+function generateTable(table, data) {
+  for (let element of data) {
+    let row = table.insertRow();
+    for (key in element) {
+      if (key === "createdAt") {
+        let cell = row.insertCell();
+        let text = document.createTextNode(
+          new Date(element[key]).toLocaleDateString()
+        );
+        cell.className = "fw-bold";
+        cell.appendChild(text);
+      } else if (key === "amount") {
+        let cell = row.insertCell();
+        let text = document.createTextNode(rupee.format(element[key]));
+        cell.className = "text-end";
+        cell.appendChild(text);
+        totalExpense += element[key];
+      } else {
+        let cell = row.insertCell();
+        let text = document.createTextNode(element[key]);
+        cell.appendChild(text);
+      }
+    }
+  }
+}
