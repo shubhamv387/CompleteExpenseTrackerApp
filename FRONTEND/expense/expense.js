@@ -222,8 +222,18 @@ function showOnReload(page, limit) {
         headers: { Authorization: token },
       })
       .then(
-        ({ data: { expenses, userName, isPremium, status, ...pageData } }) => {
+        ({
+          data: {
+            expenses,
+            userTotalExpense,
+            userName,
+            isPremium,
+            status,
+            ...pageData
+          },
+        }) => {
           const welcomeText = document.getElementById("welcomeText");
+          totalPrice = userTotalExpense;
           if (!expenses.length) {
             welcomeText.innerText = `Hello, ${userName.split(" ")[0]}`;
             loadingExpense.innerHTML = "Add New Expenses Here!";
@@ -233,21 +243,19 @@ function showOnReload(page, limit) {
 
             expenses.forEach((expense) => {
               showExpensesOnScreen(expense);
-              totalPrice += expense.amount;
             });
             showPagination(pageData);
-            if (!isPremium) {
-              document.getElementById("getpremium").style.display = "block";
-              document.getElementById("expenseList").style.marginBottom =
-                "100px";
-              document.getElementById("lbUserList").style.display = "none";
-            } else {
-              leaderBoardFeature();
-              document.getElementById("premiumUserText").innerText = `Hey ${
-                userName.split(" ")[0]
-              }, You Are A Premium User`;
-              document.getElementById("premiumUser").style.display = "block";
-            }
+          }
+          if (!isPremium) {
+            document.getElementById("getpremium").style.display = "block";
+            document.getElementById("expenseList").style.marginBottom = "100px";
+            document.getElementById("lbUserList").style.display = "none";
+          } else {
+            leaderBoardFeature();
+            document.getElementById("premiumUserText").innerText = `Hey ${
+              userName.split(" ")[0]
+            }, You Are A Premium User`;
+            document.getElementById("premiumUser").style.display = "block";
           }
           totalExpense.innerHTML = rupee.format(totalPrice);
         }

@@ -186,6 +186,7 @@ exports.getExpensePagination = async (req, res, next) => {
       status: "Success",
       userName: req.user.name,
       isPremium: req.user.isPremium,
+      userTotalExpense: req.user.allExpenses,
       expenses,
       currentPage: page,
       hasNextPage: ITEM_PER_PAGE * page < totalExpenses,
