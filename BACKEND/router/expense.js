@@ -5,19 +5,10 @@ const isPremium = require("../middleware/isPremium");
 
 const router = express.Router();
 
-router.get("/", authMiddleware.authUser, expenseController.getAllExpenses);
-
 router.get(
-  "/generatereport",
+  "/",
   authMiddleware.authUser,
-  expenseController.generateReport
-);
-
-router.get(
-  "/lb-users-expenses",
-  authMiddleware.authUser,
-  isPremium.isPremiumUser,
-  expenseController.getLbUsersExpenses
+  expenseController.getExpensePagination
 );
 
 // router.get(
@@ -43,6 +34,26 @@ router.delete(
   "/delete-expense/:id",
   authMiddleware.authUser,
   expenseController.deleteExpense
+);
+
+router.get(
+  "/lb-users-expenses",
+  authMiddleware.authUser,
+  isPremium.isPremiumUser,
+  expenseController.getLbUsersExpenses
+);
+
+router.get(
+  "/generatereport",
+  authMiddleware.authUser,
+  expenseController.generateReport
+);
+
+router.get(
+  "/expense?page=pagenumber",
+  authMiddleware.authUser,
+  isPremium.isPremiumUser,
+  expenseController.getExpensePagination
 );
 
 module.exports = router;

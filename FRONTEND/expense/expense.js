@@ -1,3 +1,8 @@
+/* Reloading page after clicking back button */
+if (performance.navigation.type === 2) {
+  location.reload(true);
+}
+
 let rupee = new Intl.NumberFormat("en-IN", {
   style: "currency",
   currency: "INR",
@@ -6,7 +11,8 @@ let totalPrice = 0;
 const token = localStorage.getItem("token");
 const loadingExpense = document.getElementById("loadingExpense");
 
-window.addEventListener("DOMContentLoaded", showOnReload);
+let page = 1;
+window.addEventListener("DOMContentLoaded", showOnReload(page));
 
 const form = document.getElementById("form-submit");
 form.addEventListener("submit", (e) => {
@@ -187,11 +193,8 @@ function showExpensesOnScreen(ExpenseObj) {
       .catch((err) => console.log(err.message));
   }
 }
-/* Reloading page after clicking back button */
-if (performance.navigation.type === 2) {
-  location.reload(true);
-}
-function showOnReload() {
+
+function showOnReload(page) {
   // window.location.reload();
   const totalExpense = document.getElementById("totalExpense");
 
@@ -200,50 +203,119 @@ function showOnReload() {
 
   setTimeout(() => {
     axios
-      .get("http://localhost:3000/expense", {
+      .get(`http://localhost:3000/expense?page=${page}`, {
         headers: { Authorization: token },
       })
-      .then((expenses) => {
-        if (!expenses.data.isPremium) {
-          document.getElementById("getpremium").style.display = "block";
-          document.getElementById("expenseList").style.marginBottom = "100px";
-          document.getElementById("lbUserList").style.display = "none";
-        } else {
-          leaderBoardFeature();
-          document.getElementById("premiumUserText").innerText = `Hey ${
-            expenses.data.userName.split(" ")[0]
-          }, You Are A Premium User`;
-          document.getElementById("premiumUser").style.display = "block";
-        }
+      .then(
+        ({ data: { expenses, userName, isPremium, status, ...pageData } }) => {
+          if (!isPremium) {
+            document.getElementById("getpremium").style.display = "block";
+            document.getElementById("expenseList").style.marginBottom = "100px";
+            document.getElementById("lbUserList").style.display = "none";
+          } else {
+            leaderBoardFeature();
+            document.getElementById("premiumUserText").innerText = `Hey ${
+              userName.split(" ")[0]
+            }, You Are A Premium User`;
+            document.getElementById("premiumUser").style.display = "block";
+          }
 
-        const welcomeText = document.getElementById("welcomeText");
-        if (!expenses.data.expenses.length) {
-          welcomeText.innerText = `Hello, ${
-            expenses.data.userName.split(" ")[0]
-          }`;
-          loadingExpense.innerHTML = "Add New Expenses Here!";
-        } else {
-          welcomeText.innerText = `Hello, ${
-            expenses.data.userName.split(" ")[0]
-          }`;
-          loadingExpense.style.display = "none";
+          const welcomeText = document.getElementById("welcomeText");
+          if (!expenses.length) {
+            welcomeText.innerText = `Hello, ${userName.split(" ")[0]}`;
+            loadingExpense.innerHTML = "Add New Expenses Here!";
+          } else {
+            welcomeText.innerText = `Hello, ${userName.split(" ")[0]}`;
+            loadingExpense.style.display = "none";
 
-          expenses.data.expenses.forEach((expense) => {
-            showExpensesOnScreen(expense);
-            totalPrice += expense.amount;
-          });
+            expenses.forEach((expense) => {
+              showExpensesOnScreen(expense);
+              totalPrice += expense.amount;
+            });
+            showPagination(pageData);
+          }
+          totalExpense.innerHTML = rupee.format(totalPrice);
         }
-        totalExpense.innerHTML = rupee.format(totalPrice);
-      })
+      )
       .catch((err) => {
         totalExpense.innerHTML = rupee.format(totalPrice);
         console.log(err.message);
         setTimeout(() => {
-          window.location.replace("../login/login.html");
+          // window.location.replace("../login/login.html");
         }, 1500);
         loadingExpense.innerHTML = "Not authorized, please login again!";
       });
   }, 800);
+}
+
+function showPagination({
+  currentPage,
+  hasNextPage,
+  hasPreviousPage,
+  lastPage,
+  naxtPage,
+  previousPage,
+}) {
+  // console.log(previousPage);
+  const paginationDiv = document.createElement("div");
+  paginationDiv.className = "g-2";
+  paginationDiv.setAttribute("id", "paginationDiv");
+  const expenseListDiv = document.getElementById("expenseList").parentElement;
+
+  const expenseList = document.getElementById("expenseList");
+
+  if (hasPreviousPage) {
+    const btn1 = document.createElement("button");
+    btn1.className = "btn btn-outline-primary";
+    btn1.innerHTML = previousPage;
+    btn1.addEventListener("click", () => {
+      while (expenseList.lastElementChild) {
+        expenseList.removeChild(expenseList.lastElementChild);
+      }
+      document.getElementById("paginationDiv").remove();
+      showOnReload(previousPage);
+    });
+    paginationDiv.appendChild(btn1);
+  }
+  const btn2 = document.createElement("button");
+  btn2.className = "btn btn-primary mx-2";
+  btn2.innerHTML = currentPage;
+  btn2.addEventListener("click", () => {
+    while (expenseList.lastElementChild) {
+      expenseList.removeChild(expenseList.lastElementChild);
+    }
+    document.getElementById("paginationDiv").remove();
+    showOnReload(currentPage);
+  });
+  paginationDiv.appendChild(btn2);
+
+  if (hasNextPage) {
+    const btn3 = document.createElement("button");
+    btn3.className = "btn btn-outline-primary";
+    btn3.innerHTML = naxtPage;
+    btn3.addEventListener("click", () => {
+      while (expenseList.lastElementChild) {
+        expenseList.removeChild(expenseList.lastElementChild);
+      }
+      document.getElementById("paginationDiv").remove();
+      showOnReload(naxtPage);
+    });
+    paginationDiv.appendChild(btn3);
+  }
+  expenseListDiv.appendChild(paginationDiv);
+  // console.log(expenseListDiv);
+}
+
+function getExpensesOnPagination(page) {
+  axios
+    .get(`http://localhost:3000/expense?page=${page}`, {
+      headers: { Authorization: token },
+    })
+    .then(
+      ({ data: { expenses, userName, isPremium, status, ...pageData } }) => {
+        console.log(expenses);
+      }
+    );
 }
 
 /* LEADERBOARD FEATURES START */

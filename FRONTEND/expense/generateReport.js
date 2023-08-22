@@ -3,18 +3,8 @@ let rupee = new Intl.NumberFormat("en-IN", {
   style: "currency",
   currency: "INR",
 });
-let totalExpense = 0;
-// const logout = document.getElementById("logout");
-// logout.addEventListener("click", () => {
-//   if (token) localStorage.setItem("token", "");
-//   window.location.replace("../login/login.html");
-// });
 
-// const profilePic = document.getElementById("profilePic");
-// profilePic.addEventListener("click", () => {
-//   const welcomeDiv = document.getElementById("welcomeDiv");
-//   welcomeDiv.classList.toggle("profileShow");
-// });
+let totalExpense = 0;
 
 window.addEventListener("DOMContentLoaded", async () => {
   try {
@@ -25,8 +15,12 @@ window.addEventListener("DOMContentLoaded", async () => {
       }
     );
 
-    const userExpenseList = userExpenseArray.data.expenses;
+    const welcomeText = document.getElementById("welcomeText");
+    welcomeText.innerText = `Hello, ${
+      userExpenseArray.data.userName.split(" ")[0]
+    }`;
 
+    const userExpenseList = userExpenseArray.data.expenses;
     document.getElementById(
       "fullReportYear"
     ).innerText = `Full Report - ${new Date().getFullYear()}`;
@@ -47,6 +41,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("tableDiv").appendChild(total);
     /* DOWNLOAD REPORT START */
 
+    if (!userExpenseArray.data.isPremium) return;
     const response = await axios(
       "http://localhost:3000/user/expense-report-downloaded-list",
       {
@@ -108,13 +103,17 @@ window.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-let mountains = [
-  { name: "Monte Falco", height: 1658, place: "Parco Foreste Casentinesi" },
-  { name: "Monte Falterona", height: 1654, place: "Parco Foreste Casentinesi" },
-  { name: "Poggio Scali", height: 1520, place: "Parco Foreste Casentinesi" },
-  { name: "Pratomagno", height: 1592, place: "Parco Foreste Casentinesi" },
-  { name: "Monte Amiata", height: 1738, place: "Siena" },
-];
+const logout = document.getElementById("logout");
+logout.addEventListener("click", () => {
+  if (token) localStorage.setItem("token", "");
+  window.location.replace("../login/login.html");
+});
+
+const profilePic = document.getElementById("profilePic");
+profilePic.addEventListener("click", () => {
+  const welcomeDiv = document.getElementById("welcomeDiv");
+  welcomeDiv.classList.toggle("profileShow");
+});
 
 function generateTableHead(table) {
   let thead = table.createTHead();

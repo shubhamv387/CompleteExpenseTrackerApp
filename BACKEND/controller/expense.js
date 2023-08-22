@@ -29,6 +29,8 @@ exports.generateReport = async (req, res, next) => {
       order: [["id", "DESC"]],
     });
     return res.json({
+      userName: req.user.name,
+      isPremium: req.user.isPremium,
       expenses,
     });
   } catch (error) {
@@ -157,6 +159,39 @@ exports.getLbUsersExpenses = async (req, res, next) => {
     return res.json({
       status: "Success",
       users: users,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({ Error: "Something Wrong", error });
+  }
+};
+
+// @desc    Getting All LB Users List
+// @route   GET /expense?page=pagenumber
+// @access  Private
+exports.getExpensePagination = async (req, res, next) => {
+  try {
+    console.log(req.query);
+    const ITEM_PER_PAGE = 4;
+    const page = +req.query.page || 1;
+    let totalExpenses = await Expense.count({ where: { userId: req.user.id } });
+
+    const expenses = await req.user.getExpenses({
+      offset: (page - 1) * ITEM_PER_PAGE,
+      limit: ITEM_PER_PAGE,
+    });
+
+    return res.json({
+      status: "Success",
+      userName: req.user.name,
+      isPremium: req.user.isPremium,
+      expenses,
+      currentPage: page,
+      hasNextPage: ITEM_PER_PAGE * page < totalExpenses,
+      naxtPage: page + 1,
+      hasPreviousPage: page > 1,
+      previousPage: page - 1,
+      lastPage: Math.ceil(totalExpenses / ITEM_PER_PAGE),
     });
   } catch (error) {
     console.log(error);
