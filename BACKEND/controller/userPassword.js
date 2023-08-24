@@ -34,7 +34,7 @@ exports.resetForgotPassword = async (req, res, next) => {
 
     apiKey.apiKey = process.env.BREVO_API_KEY;
 
-    const path = `http://localhost:3000/password/resetpassword/${id}`;
+    const path = `http://16.171.230.154:3000/password/resetpassword/${id}`;
 
     const sender = {
       email: "shubhamv387@gmail.com",
@@ -155,7 +155,7 @@ exports.createNewPassword = async (req, res, next) => {
                 } else {
                   try {
                     const response = await axios.post(
-                      "http://localhost:3000/password/resetpassword/${req.params.id}",
+                      "http://16.171.230.154:3000/password/resetpassword/${req.params.id}",
                       { pass: pass.value, confirmPass: confirmPass.value }
                     );
       
