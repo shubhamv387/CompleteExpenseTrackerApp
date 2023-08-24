@@ -1,4 +1,4 @@
 node_modules
 rest.rest
 .env
-testingFunctions.js
+Procfile
