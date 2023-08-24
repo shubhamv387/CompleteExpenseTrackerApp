@@ -49,7 +49,7 @@ app.use("/expense", expenseRouter);
 app.use("/order", orderRouter);
 
 app.use((req, res, next) => {
-  res.status(404).json({ message: "Page Not Found!" });
+  res.sendFile(path.join(__dirname, `/public/${req.url}`));
 });
 
 User.hasMany(Expenses);

@@ -10,9 +10,14 @@ let rupee = new Intl.NumberFormat("en-IN", {
 let totalPrice = 0;
 const token = localStorage.getItem("token");
 const loadingExpense = document.getElementById("loadingExpense");
-let limit = 5;
 
 const expToShow = document.getElementById("expToShow");
+
+let listOfExpenseToShow = localStorage.getItem("listOfExpenseToShow");
+
+let limit = listOfExpenseToShow || 5;
+
+expToShow.value = limit;
 
 expToShow.addEventListener("change", () => {
   while (expenseList.lastElementChild) {
@@ -20,6 +25,7 @@ expToShow.addEventListener("change", () => {
   }
   document.getElementById("paginationDiv").remove();
   limit = document.getElementById("expToShow").value;
+  localStorage.setItem("listOfExpenseToShow", expToShow.value);
   showOnReload(page, expToShow.value);
 });
 
@@ -267,7 +273,7 @@ function showOnReload(page, limit) {
         totalExpense.innerHTML = rupee.format(totalPrice);
         console.log(err.message);
         setTimeout(() => {
-           window.location.replace("../login/login.html");
+          window.location.replace("../login/login.html");
         }, 1500);
         loadingExpense.innerHTML = "Not authorized, please login again!";
       });
@@ -378,6 +384,7 @@ function leaderBoardFeature() {
 const logout = document.getElementById("logout");
 logout.addEventListener("click", () => {
   localStorage.setItem("token", "");
+  localStorage.removeItem("listOfExpenseToShow");
   window.location.replace("../login/login.html");
 });
 
