@@ -40,7 +40,7 @@ app.use(cors());
 
 app.use(cookieParser());
 
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.use("/user", userRouter);
@@ -49,7 +49,7 @@ app.use("/expense", expenseRouter);
 app.use("/order", orderRouter);
 
 app.use((req, res, next) => {
-  res.sendFile(path.join(__dirname, `/public/${req.url}`));
+  res.sendFile(path.join(__dirname, `public/${req.url}`));
 });
 
 User.hasMany(Expenses);
