@@ -1,13 +1,9 @@
 const express = require("express");
-const fs = require("fs");
 const path = require("path");
 const sequelize = require("./utils/database");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const cookieParser = require("cookie-parser");
-const helmet = require("helmet");
-const conpression = require("compression");
-// const morgan = require("morgan");
+
 require("dotenv");
 const PORT = process.env.PORT || 3000;
 
@@ -25,28 +21,15 @@ const ForgotPasswordRequest = require("./model/ForgotPasswordRequests");
 const DownloadExpensesList = require("./model/DownloadedExpenseList");
 
 const app = express();
-
-const accessLogStream = fs.createWriteStream(
-  path.join(__dirname, "access.log"),
-  {
-    flag: "a",
-  }
-);
-
-app.use(helmet());
-app.use(conpression());
-// app.use(morgan("combined", { stream: accessLogStream }));
 app.use(cors());
-
-app.use(cookieParser());
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.use("/user", userRouter);
+app.use("/users", userRouter);
 app.use("/password", userPasswordRouter);
-app.use("/expense", expenseRouter);
-app.use("/order", orderRouter);
+app.use("/expenses", expenseRouter);
+app.use("/orders", orderRouter);
 
 app.use((req, res, next) => {
   res.sendFile(path.join(__dirname, `public/${req.url}`));
