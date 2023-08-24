@@ -7,7 +7,7 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const helmet = require("helmet");
 const conpression = require("compression");
-const morgan = require("morgan");
+// const morgan = require("morgan");
 require("dotenv");
 const PORT = process.env.PORT || 3000;
 
@@ -20,7 +20,7 @@ const orderRouter = require("./router/order");
 // Models
 const User = require("./model/User");
 const Expenses = require("./model/Expense");
-const Order = require("./model/order");
+const Order = require("./model/Order");
 const ForgotPasswordRequest = require("./model/ForgotPasswordRequests");
 const DownloadExpensesList = require("./model/DownloadedExpenseList");
 
@@ -35,7 +35,7 @@ const accessLogStream = fs.createWriteStream(
 
 app.use(helmet());
 app.use(conpression());
-app.use(morgan("combined", { stream: accessLogStream }));
+// app.use(morgan("combined", { stream: accessLogStream }));
 app.use(cors());
 
 app.use(cookieParser());

@@ -1,6 +1,6 @@
 require("dotenv").config();
 const Razorpay = require("razorpay");
-const Order = require("../model/order.js");
+const Order = require("../model/Order");
 const sequelize = require("../utils/database");
 
 exports.purchasepremium = async (req, res) => {
