@@ -267,7 +267,7 @@ function showOnReload(page, limit) {
         totalExpense.innerHTML = rupee.format(totalPrice);
         console.log(err.message);
         setTimeout(() => {
-          // window.location.replace("../login/login.html");
+           window.location.replace("../login/login.html");
         }, 1500);
         loadingExpense.innerHTML = "Not authorized, please login again!";
       });
