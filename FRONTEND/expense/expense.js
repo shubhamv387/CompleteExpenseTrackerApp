@@ -268,7 +268,7 @@ function showOnReload(page, limit) {
         console.log(err.message);
         setTimeout(() => {
           window.location.replace("../login/login.html");
-        }, 1500);
+        }, 1000);
         loadingExpense.innerHTML = "Not authorized, please login again!";
       });
   }, 800);
