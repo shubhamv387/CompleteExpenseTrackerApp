@@ -98,7 +98,7 @@ async function getResetPasswordEmail(e) {
     setTimeout(() => {
       msg.style.display = "none";
       msg.innerHTML = "";
-      window.location.replace("../login/login.html");
+      window.location.replace("./login.html");
     }, 5000);
   } catch (error) {
     msg.className = "bg-danger text-white p-1 px-2";

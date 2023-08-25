@@ -134,7 +134,7 @@ exports.createNewPassword = async (req, res, next) => {
               You can
               <a
                 style="font-weight: bold"
-                href="http://127.0.0.1:5501/login/login.html"
+                href="http://127.0.0.1:5500/login/login.html"
                 >Login Now</a
               >
               with the new password.

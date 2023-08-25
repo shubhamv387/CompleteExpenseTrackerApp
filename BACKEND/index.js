@@ -5,7 +5,7 @@ const sequelize = require("./utils/database");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
-const helmet = require("helmet");
+// const helmet = require("helmet");
 const conpression = require("compression");
 // const morgan = require("morgan");
 require("dotenv");
@@ -33,7 +33,7 @@ const accessLogStream = fs.createWriteStream(
   }
 );
 
-app.use(helmet());
+// app.use(helmet());
 app.use(conpression());
 // app.use(morgan("combined", { stream: accessLogStream }));
 app.use(cors());
