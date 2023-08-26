@@ -9,7 +9,7 @@ let totalExpense = 0;
 window.addEventListener("DOMContentLoaded", async () => {
   try {
     const userExpenseArray = await axios(
-      "http://16.171.230.154:3000/expense/generatereport",
+      "http://13.51.79.59:3000/expense/generatereport",
       {
         headers: { Authorization: token },
       }
@@ -43,7 +43,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 
     if (!userExpenseArray.data.isPremium) return;
     const response = await axios(
-      "http://16.171.230.154:3000/user/expense-report-downloaded-list",
+      "http://13.51.79.59:3000/user/expense-report-downloaded-list",
       {
         headers: { Authorization: token },
       }
@@ -79,7 +79,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     downloadReport.addEventListener("click", async () => {
       try {
         const response = await axios.get(
-          "http://16.171.230.154:3000/user/downloadexpensesreport",
+          "http://13.51.79.59:3000/user/downloadexpensesreport",
           {
             headers: { Authorization: token },
           }

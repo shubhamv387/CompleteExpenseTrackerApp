@@ -53,7 +53,7 @@ form.addEventListener("submit", (e) => {
 
   // POST request to backend
   axios
-    .post("http://16.171.230.154:3000/expenses/add-expense", ExpenseObj, {
+    .post("http://13.51.79.59:3000/expenses/add-expense", ExpenseObj, {
       headers: { Authorization: token },
     })
     .then((res) => {
@@ -145,7 +145,7 @@ function showExpensesOnScreen(ExpenseObj) {
       else {
         axios
           .put(
-            `http://16.171.230.154:3000/expenses/edit-expense/${ExpenseObj.id}`,
+            `http://13.51.79.59:3000/expenses/edit-expense/${ExpenseObj.id}`,
             updatedExpense,
             {
               headers: { Authorization: token },
@@ -194,7 +194,7 @@ function showExpensesOnScreen(ExpenseObj) {
     // console.log(token);
     axios
       .delete(
-        `http://16.171.230.154:3000/expenses/delete-expense/${ExpenseObj.id}`,
+        `http://13.51.79.59:3000/expenses/delete-expense/${ExpenseObj.id}`,
         {
           headers: { Authorization: token },
         }
@@ -227,7 +227,7 @@ function showOnReload(page, limit) {
 
   setTimeout(() => {
     axios
-      .get(`http://16.171.230.154:3000/expenses?page=${page}&limit=${limit}`, {
+      .get(`http://13.51.79.59:3000/expenses?page=${page}&limit=${limit}`, {
         headers: { Authorization: token },
       })
       .then(
@@ -342,7 +342,7 @@ function showPagination({
 /* LEADERBOARD FEATURES START */
 function leaderBoardFeature() {
   axios
-    .get("http://16.171.230.154:3000/expenses/lb-users-expenses", {
+    .get("http://13.51.79.59:3000/expenses/lb-users-expenses", {
       headers: { Authorization: token },
     })
     .then((users) => {
@@ -403,7 +403,7 @@ function purchasePremiumService(e) {
   e.preventDefault();
 
   axios
-    .get("http://16.171.230.154:3000/orders/premiummembership", {
+    .get("http://13.51.79.59:3000/orders/premiummembership", {
       headers: { Authorization: token },
     })
     .then((res) => {
@@ -419,7 +419,7 @@ function purchasePremiumService(e) {
           // Send the payment_id to your server for updating transaction status
           try {
             const response = await axios.post(
-              "http://16.171.230.154:3000/orders/updatetrnasectionstatus",
+              "http://13.51.79.59:3000/orders/updatetrnasectionstatus",
               { order_id: options.order_id, payment_id: payment_id },
               {
                 headers: { Authorization: token },
@@ -449,7 +449,7 @@ function purchasePremiumService(e) {
       rzp1.on("payment.failed", function (response) {
         axios
           .post(
-            "http://16.171.230.154:3000/orders/updatetrnasectionstatus",
+            "http://13.51.79.59:3000/orders/updatetrnasectionstatus",
             response,
             {
               headers: { Authorization: token },

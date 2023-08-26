@@ -59,7 +59,7 @@ sequelize
   .sync()
   .then(() => {
     app.listen(PORT, () =>
-      console.log(`server is running on http://16.171.230.154:${PORT}`)
+      console.log(`server is running on http://13.51.79.59:${PORT}`)
     );
   })
   .catch((err) => console.log(err));

@@ -17,7 +17,7 @@ form.addEventListener("submit", (e) => {
   };
 
   axios
-    .post("http://16.171.230.154:3000/users/signup", userObj)
+    .post("http://13.51.79.59:3000/users/signup", userObj)
     .then((user) => {
       msg.innerHTML = user.data.message;
       if (user.data.userDetails) {

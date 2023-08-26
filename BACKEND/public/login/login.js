@@ -14,7 +14,7 @@ form.addEventListener("submit", (e) => {
   };
 
   axios
-    .post("http://16.171.230.154:3000/users/login", userObj)
+    .post("http://13.51.79.59:3000/users/login", userObj)
     .then((user) => {
       msg.innerHTML = user.data.message;
 
@@ -82,7 +82,7 @@ async function getResetPasswordEmail(e) {
 
   try {
     const response = await axios.post(
-      "http://16.171.230.154:3000/password/forgotpassword",
+      "http://13.51.79.59:3000/password/forgotpassword",
       {
         email: emailForResetPass.value,
       }
