@@ -6,6 +6,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 
 require("dotenv");
+
 const PORT = process.env.PORT || 3000;
 
 //Routers
