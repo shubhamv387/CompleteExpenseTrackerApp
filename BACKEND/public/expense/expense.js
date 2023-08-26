@@ -205,10 +205,9 @@ function showExpensesOnScreen(ExpenseObj) {
         showTotalExpense.innerText = rupee.format(totalPrice);
         expenseList.removeChild(expense);
 
-        if (!expenseList.children[1]) {
+        if (!expenseList.childnodes[0]) {
           loadingExpense.innerHTML = "No Expenses found on this page!";
           loadingExpense.style.display = "block";
-          document.getElementById("paginationDiv").remove();
         }
         return deletedExpense.data;
       })
