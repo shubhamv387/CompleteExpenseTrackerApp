@@ -206,9 +206,9 @@ function showExpensesOnScreen(ExpenseObj) {
         expenseList.removeChild(expense);
 
         if (!expenseList.children[1]) {
-          document.getElementById("paginationDiv").remove();
-          loadingExpense.innerHTML = "Add New Expenses Here!";
+          loadingExpense.innerHTML = "No Expenses found on this page!";
           loadingExpense.style.display = "block";
+          document.getElementById("paginationDiv").remove();
         }
         return deletedExpense.data;
       })
