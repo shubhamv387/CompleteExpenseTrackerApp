@@ -370,6 +370,7 @@ function leaderBoardFeature() {
         }</span><span style="width: 20%">${(i += 1)}</span> <span>${
           user.name
         }</span></span> <span>${rupee.format(user.allExpenses)}</span>`;
+
         lbUserList.appendChild(lbUser);
       });
       lbDisplay.style.display = "block";

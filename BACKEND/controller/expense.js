@@ -167,7 +167,7 @@ exports.getLbUsersExpenses = async (req, res, next) => {
 };
 
 // @desc    Getting All LB Users List
-// @route   GET /expense?page=pagenumber
+// @route   GET /expense?page=pagenumber&limit
 // @access  Private
 exports.getExpensePagination = async (req, res, next) => {
   try {
