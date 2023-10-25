@@ -99,14 +99,14 @@ window.addEventListener('DOMContentLoaded', async () => {
     });
   } catch (error) {
     console.log(error);
-    // window.location.replace("../login/login.html");
+    window.location.replace('../login');
   }
 });
 
 const logout = document.getElementById('logout');
 logout.addEventListener('click', () => {
   if (token) localStorage.setItem('token', '');
-  window.location.replace('../login/login.html');
+  window.location.replace('../login');
 });
 
 const profilePic = document.getElementById('profilePic');

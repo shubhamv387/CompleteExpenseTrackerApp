@@ -7,6 +7,7 @@ let rupee = new Intl.NumberFormat('en-IN', {
   style: 'currency',
   currency: 'INR',
 });
+
 let totalPrice = 0;
 const token = localStorage.getItem('token');
 
@@ -273,7 +274,7 @@ function showOnReload(page, limit) {
         totalExpense.innerHTML = rupee.format(totalPrice);
         console.log(err.message);
         setTimeout(() => {
-          window.location.replace('../login/login.html');
+          window.location.replace('../login');
         }, 1500);
         loadingExpense.innerHTML = 'Not authorized, please login again!';
       });
@@ -386,7 +387,7 @@ const logout = document.getElementById('logout');
 logout.addEventListener('click', () => {
   localStorage.setItem('token', '');
   localStorage.removeItem('listOfExpenseToShow');
-  window.location.replace('../login/login.html');
+  window.location.replace('../login');
 });
 
 const profilePic = document.getElementById('profilePic');
