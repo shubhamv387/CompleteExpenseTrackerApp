@@ -1,9 +1,9 @@
-const Brevo = require("sib-api-v3-sdk");
-const ForgotPasswordRequest = require("../model/ForgotPasswordRequests");
-const { v4: uuidv4 } = require("uuid");
-const bcrypt = require("bcryptjs");
-const User = require("../model/User");
-const sequelize = require("../utils/database");
+const Brevo = require('sib-api-v3-sdk');
+const ForgotPasswordRequest = require('../model/ForgotPasswordRequests');
+const { v4: uuidv4 } = require('uuid');
+const bcrypt = require('bcryptjs');
+const User = require('../model/User');
+const sequelize = require('../utils/database');
 
 // @desc    Sending password reset mail to User
 // @route   POST /user/password/forgotpassword
@@ -15,7 +15,7 @@ exports.resetForgotPassword = async (req, res, next) => {
     if (!user)
       return res
         .status(400)
-        .json({ status: "Failed", message: "email does not Exists!" });
+        .json({ status: 'Failed', message: 'email does not Exists!' });
 
     const id = uuidv4();
     const FPR = await ForgotPasswordRequest.create({
@@ -27,7 +27,7 @@ exports.resetForgotPassword = async (req, res, next) => {
     const defaultClient = await Brevo.ApiClient.instance;
 
     // Configure API key authorization: api-key
-    const apiKey = defaultClient.authentications["api-key"];
+    const apiKey = defaultClient.authentications['api-key'];
     const transEmailApi = new Brevo.TransactionalEmailsApi();
 
     await Promise.all([apiKey, transEmailApi]);
@@ -37,22 +37,22 @@ exports.resetForgotPassword = async (req, res, next) => {
     const path = `http://localhost:3000/password/resetpassword/${id}`;
 
     const sender = {
-      email: "shubhamv387@gmail.com",
-      name: "Shubhamv K",
+      email: 'shubhamv387@gmail.com',
+      name: 'Shubhamv K',
     };
     const receivers = [req.body];
 
     await transEmailApi.sendTransacEmail({
       sender,
       to: receivers,
-      subject: "reset password mail",
-      textContent: "Click here to reset your password",
+      subject: 'reset password mail',
+      textContent: 'Click here to reset your password',
       htmlContent: `<a href="${path}">Click Here</a> to reset your password!`,
     });
 
     res
       .status(200)
-      .json({ status: "Success", message: "email sent successfully!" });
+      .json({ status: 'Success', message: 'email sent successfully!' });
   } catch (error) {
     console.error(error);
   }
@@ -69,7 +69,7 @@ exports.createNewPassword = async (req, res, next) => {
     if (!FPR)
       return res
         .status(400)
-        .json({ status: "failed", message: "invalid link" });
+        .json({ status: 'failed', message: 'invalid link' });
 
     return res.status(200).send(`<!DOCTYPE html>
       <html lang="en">
@@ -190,7 +190,7 @@ exports.PostCreateNewPassword = async (req, res, next) => {
   if (pass !== confirmPass)
     return res
       .status(400)
-      .send({ status: "Failed", message: "MisMatched Passwords!" });
+      .send({ status: 'Failed', message: 'MisMatched Passwords!' });
 
   const t = await sequelize.transaction();
   try {
@@ -202,8 +202,8 @@ exports.PostCreateNewPassword = async (req, res, next) => {
     if (!FPR.isActive) {
       await t.commit();
       return res.status(400).send({
-        status: "Failed",
-        message: "Link Expired! Go back and generate a New Link",
+        status: 'Failed',
+        message: 'Link Expired! Go back and generate a New Link',
       });
     }
 
@@ -224,7 +224,7 @@ exports.PostCreateNewPassword = async (req, res, next) => {
     await t.commit();
     res
       .status(200)
-      .send({ status: "Success", message: "Password Updated Successfully" });
+      .send({ status: 'Success', message: 'Password Updated Successfully' });
   } catch (error) {
     t.rollback();
     console.log(error);

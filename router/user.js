@@ -1,38 +1,38 @@
-const express = require("express");
-const userController = require("../controller/user");
-const authMiddleware = require("../middleware/authMiddleware");
-const isAdminMiddleware = require("../middleware/isAdmin");
-const isPremiumUser = require("../middleware/isPremium");
+const express = require('express');
+const userController = require('../controller/user');
+const authMiddleware = require('../middleware/authMiddleware');
+const isAdminMiddleware = require('../middleware/isAdmin');
+const isPremiumUser = require('../middleware/isPremium');
 
 const router = express.Router();
 
 router.get(
-  "/allusers",
+  '/allusers',
   authMiddleware.authUser,
   isAdminMiddleware.isAdmin,
   userController.getAllUsers
 );
 
-router.post("/signup", userController.userSignup);
+router.post('/signup', userController.userSignup);
 
-router.post("/login", userController.userLogin);
+router.post('/login', userController.userLogin);
 
-router.post("/logout", userController.logoutUser);
+router.post('/logout', userController.logoutUser);
 
 router
-  .route("/profile")
+  .route('/profile')
   .get(authMiddleware.authUser, userController.getUserProfile)
   .put(authMiddleware.authUser, userController.updateUserProfile);
 
 router.get(
-  "/downloadexpensesreport",
+  '/downloadexpensesreport',
   authMiddleware.authUser,
   isPremiumUser.isPremiumUser,
   userController.downloadExpensesReport
 );
 
 router.get(
-  "/expense-report-downloaded-list",
+  '/expense-report-downloaded-list',
   authMiddleware.authUser,
   isPremiumUser.isPremiumUser,
   userController.getDownloadedExpenseList

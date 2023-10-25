@@ -1,10 +1,9 @@
+require('dotenv').config();
 const express = require('express');
 const sequelize = require('./utils/database');
 const cors = require('cors');
 const path = require('path');
 const conpression = require('compression');
-const dotenv = require('dotenv');
-dotenv.config();
 
 const PORT = process.env.PORT || 3000;
 

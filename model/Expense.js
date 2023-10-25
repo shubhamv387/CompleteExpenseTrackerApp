@@ -1,7 +1,7 @@
-const DataType = require("sequelize");
-const sequelize = require("../utils/database");
+const DataType = require('sequelize');
+const sequelize = require('../utils/database');
 
-const Expense = sequelize.define("expense", {
+const Expense = sequelize.define('expense', {
   id: {
     type: DataType.INTEGER,
     autoIncrement: true,
@@ -18,7 +18,7 @@ const Expense = sequelize.define("expense", {
   },
   category: {
     type: DataType.ENUM,
-    values: ["Fuel", "Food", "Electricity", "Movie"],
+    values: ['Fuel', 'Food', 'Electricity', 'Movie'],
     allowNull: false,
   },
 });

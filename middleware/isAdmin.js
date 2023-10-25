@@ -1,3 +1,3 @@
 exports.isAdmin = (req, res, next) => {
-  console.log("admin router");
+  console.log('admin router');
 };

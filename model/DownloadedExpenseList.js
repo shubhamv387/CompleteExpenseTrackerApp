@@ -1,7 +1,7 @@
-const DataType = require("sequelize");
-const sequelize = require("../utils/database");
+const DataType = require('sequelize');
+const sequelize = require('../utils/database');
 
-const DownloadExpensesList = sequelize.define("downloadexpenseslist", {
+const DownloadExpensesList = sequelize.define('downloadexpenseslist', {
   id: {
     type: DataType.INTEGER,
     allowNull: false,

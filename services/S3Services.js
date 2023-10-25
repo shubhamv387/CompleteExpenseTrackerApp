@@ -1,4 +1,4 @@
-const AWS = require("aws-sdk");
+const AWS = require('aws-sdk');
 
 exports.uploadeToS3 = (data, fileName) => {
   const BUCKET_NAME = process.env.BUCKET_NAME;
@@ -14,16 +14,16 @@ exports.uploadeToS3 = (data, fileName) => {
     Bucket: BUCKET_NAME,
     Key: fileName,
     Body: data,
-    ACL: "public-read",
+    ACL: 'public-read',
   };
 
   return new Promise((res, rej) => {
     s3bucket.upload(params, (err, s3response) => {
       if (err) {
-        console.log("Something Wrong", err);
+        console.log('Something Wrong', err);
         rej(err);
       } else {
-        console.log("success", s3response);
+        console.log('success', s3response);
         res(s3response.Location);
       }
     });

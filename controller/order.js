@@ -1,7 +1,6 @@
-require("dotenv").config();
-const Razorpay = require("razorpay");
-const Order = require("../model/Order");
-const sequelize = require("../utils/database");
+const Razorpay = require('razorpay');
+const Order = require('../model/Order');
+const sequelize = require('../utils/database');
 
 exports.purchasepremium = async (req, res) => {
   try {
@@ -11,16 +10,16 @@ exports.purchasepremium = async (req, res) => {
     });
     const amount = 2500;
 
-    rzp.orders.create({ amount, currency: "INR" }, async (err, order) => {
+    rzp.orders.create({ amount, currency: 'INR' }, async (err, order) => {
       if (err) {
         throw new Error(JSON.stringify(err));
       }
-      await req.user.createOrder({ orderId: order.id, status: "PENDING" });
+      await req.user.createOrder({ orderId: order.id, status: 'PENDING' });
       return res.status(201).json({ order, key_id: rzp.key_id });
     });
   } catch (err) {
     console.log(err);
-    res.status(403).json({ message: "Something went wrong", error: err });
+    res.status(403).json({ message: 'Something went wrong', error: err });
   }
 };
 
@@ -45,17 +44,17 @@ exports.updateTrnasectionStatus = async (req, res, next) => {
 
     if (req.body.error) {
       await order.update(
-        { paymentId: payment_id, status: "FAILED" },
+        { paymentId: payment_id, status: 'FAILED' },
         { transaction: t }
       );
       await t.commit();
       return res
         .status(200)
-        .json({ success: false, message: "Transection Failed" });
+        .json({ success: false, message: 'Transection Failed' });
     }
 
     const updatedOrder = order.update(
-      { paymentId: payment_id, status: "SUCCESSFULL" },
+      { paymentId: payment_id, status: 'SUCCESSFULL' },
       { transaction: t }
     );
 
@@ -69,7 +68,7 @@ exports.updateTrnasectionStatus = async (req, res, next) => {
     return res.status(200).json({
       userName: req.user.name,
       success: true,
-      message: "Transection successfull",
+      message: 'Transection successfull',
     });
   } catch (error) {
     await t.rollback();
@@ -78,5 +77,5 @@ exports.updateTrnasectionStatus = async (req, res, next) => {
 };
 
 exports.getAllOrders = (req, res, next) => {
-  res.json({ message: "getting all orders" });
+  res.json({ message: 'getting all orders' });
 };

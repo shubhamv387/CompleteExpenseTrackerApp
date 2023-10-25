@@ -1,17 +1,17 @@
-const express = require("express");
-const orderController = require("../controller/order");
-const authMiddleware = require("../middleware/authMiddleware");
+const express = require('express');
+const orderController = require('../controller/order');
+const authMiddleware = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
 router.get(
-  "/premiummembership",
+  '/premiummembership',
   authMiddleware.authUser,
   orderController.purchasepremium
 );
 
 router.post(
-  "/updatetrnasectionstatus",
+  '/updatetrnasectionstatus',
   authMiddleware.authUser,
   orderController.updateTrnasectionStatus
 );

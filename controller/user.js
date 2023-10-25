@@ -1,9 +1,9 @@
-const User = require("../model/User");
-const DownloadExpensesList = require("../model/DownloadedExpenseList");
-const bcrypt = require("bcryptjs");
-const generateToken = require("../utils/generateToken");
-const { uploadeToS3 } = require("../services/S3Services");
-require("dotenv").config();
+const User = require('../model/User');
+const DownloadExpensesList = require('../model/DownloadedExpenseList');
+const bcrypt = require('bcryptjs');
+const { generateToken } = require('../utils/generateToken');
+const { uploadeToS3 } = require('../services/S3Services');
+require('dotenv').config();
 
 // @desc    Get All Users
 // @route   GET /user/allusers
@@ -25,7 +25,7 @@ exports.userSignup = async (req, res, next) => {
   try {
     const existingUser = await User.findAll({ where: { email: email } });
     if (existingUser.length)
-      return res.json({ message: "Email already exists!" });
+      return res.json({ message: 'Email already exists!' });
     else {
       const hashedPassword = bcrypt.hashSync(password, 10);
       const user = await User.create({
@@ -35,9 +35,9 @@ exports.userSignup = async (req, res, next) => {
         phone: phone,
       });
 
-      const token = generateToken.generateToken(res, user.id);
+      const token = generateToken(res, user.id);
       res.status(201).json({
-        message: "User Created Successfully!",
+        message: 'User Created Successfully!',
         userDetails: {
           id: user.id,
           name: user.name,
@@ -62,14 +62,14 @@ exports.userLogin = async (req, res, next) => {
     const existingUser = await User.findAll({ where: { email: email } });
 
     if (!existingUser.length)
-      return res.json({ message: "User does not Exists!" });
+      return res.json({ message: 'User does not Exists!' });
     else {
       const user = existingUser[0];
-      const token = generateToken.generateToken(res, user.id);
+      const token = generateToken(res, user.id);
       const isCorrectPassword = bcrypt.compareSync(password, user.password);
       if (isCorrectPassword)
         return res.json({
-          message: "User Logged in Successfully!",
+          message: 'User Logged in Successfully!',
           userDetails: {
             id: user.id,
             name: user.name,
@@ -78,7 +78,7 @@ exports.userLogin = async (req, res, next) => {
           },
           token: token,
         });
-      else return res.json({ message: "Wrong Credentials!" });
+      else return res.json({ message: 'Wrong Credentials!' });
     }
   } catch (err) {
     console.log(err);
@@ -89,11 +89,11 @@ exports.userLogin = async (req, res, next) => {
 // @route   POST /user/logout
 // @access  Private
 exports.logoutUser = async (req, res, next) => {
-  await res.cookie("jwt", "", {
+  await res.cookie('jwt', '', {
     expires: new Date(0),
   });
 
-  res.status(200).json({ message: "User logged out!" });
+  res.status(200).json({ message: 'User logged out!' });
 };
 
 // @desc    Get user profile
@@ -134,7 +134,7 @@ exports.updateUserProfile = async (req, res, next) => {
       });
     else
       res.json({
-        message: "not found",
+        message: 'not found',
       });
   } catch (error) {
     console.log(error);
@@ -163,13 +163,13 @@ exports.downloadExpensesReport = async (req, res, next) => {
     res.status(200).json({
       success: true,
       fileUrl,
-      message: "Download Successful",
+      message: 'Download Successful',
     });
   } catch (error) {
     console.log(error);
     res
       .status(500)
-      .json({ success: false, message: "Download Failed", err: error });
+      .json({ success: false, message: 'Download Failed', err: error });
   }
 };
 
@@ -179,12 +179,12 @@ exports.downloadExpensesReport = async (req, res, next) => {
 exports.getDownloadedExpenseList = async (req, res, next) => {
   const DownloadedExpList = await DownloadExpensesList.findAll({
     where: { userId: req.user.id },
-    order: [["createdAt", "DESC"]],
+    order: [['createdAt', 'DESC']],
   });
   // console.log(DownloadedExpList);
   res.status(200).json({
     success: true,
-    message: "getting list",
+    message: 'getting list',
     expenseList: DownloadedExpList,
   });
 };
