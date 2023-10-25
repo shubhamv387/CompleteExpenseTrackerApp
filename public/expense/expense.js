@@ -3,45 +3,45 @@ if (performance.navigation.type === 2) {
   location.reload(true);
 }
 
-let rupee = new Intl.NumberFormat("en-IN", {
-  style: "currency",
-  currency: "INR",
+let rupee = new Intl.NumberFormat('en-IN', {
+  style: 'currency',
+  currency: 'INR',
 });
 let totalPrice = 0;
-const token = localStorage.getItem("token");
+const token = localStorage.getItem('token');
 
-const loadingExpense = document.getElementById("loadingExpense");
+const loadingExpense = document.getElementById('loadingExpense');
 
-const expToShow = document.getElementById("expToShow");
+const expToShow = document.getElementById('expToShow');
 
-let listOfExpenseToShow = localStorage.getItem("listOfExpenseToShow");
+let listOfExpenseToShow = localStorage.getItem('listOfExpenseToShow');
 
 let limit = listOfExpenseToShow || 5;
 
 expToShow.value = limit;
 
-expToShow.addEventListener("change", () => {
+expToShow.addEventListener('change', () => {
   while (expenseList.lastElementChild) {
     expenseList.removeChild(expenseList.lastElementChild);
   }
-  document.getElementById("paginationDiv").remove();
-  limit = document.getElementById("expToShow").value;
-  localStorage.setItem("listOfExpenseToShow", expToShow.value);
+  document.getElementById('paginationDiv').remove();
+  limit = document.getElementById('expToShow').value;
+  localStorage.setItem('listOfExpenseToShow', expToShow.value);
   showOnReload(page, expToShow.value);
 });
 
 let page = 1;
 
-window.addEventListener("DOMContentLoaded", showOnReload(page, limit));
+window.addEventListener('DOMContentLoaded', showOnReload(page, limit));
 
-const form = document.getElementById("form-submit");
-form.addEventListener("submit", (e) => {
+const form = document.getElementById('form-submit');
+form.addEventListener('submit', (e) => {
   e.preventDefault();
 
-  let showTotalExpense = document.getElementById("totalExpense");
-  const amount = document.getElementById("amount");
-  const description = document.getElementById("description");
-  const category = document.getElementById("category");
+  let showTotalExpense = document.getElementById('totalExpense');
+  const amount = document.getElementById('amount');
+  const description = document.getElementById('description');
+  const category = document.getElementById('category');
 
   totalPrice += parseFloat(amount.value);
 
@@ -54,7 +54,7 @@ form.addEventListener("submit", (e) => {
 
   // POST request to backend
   axios
-    .post("http://localhost:3000/expense/add-expense", ExpenseObj, {
+    .post('http://localhost:3000/expenses/add-expense', ExpenseObj, {
       headers: { Authorization: token },
     })
     .then((res) => {
@@ -72,20 +72,20 @@ form.addEventListener("submit", (e) => {
     .catch((err) => console.log(err.message));
 
   // resetting the input fields after submission
-  amount.value = "";
-  description.value = "";
-  category.value = "";
+  amount.value = '';
+  description.value = '';
+  category.value = '';
 });
 
 function showExpensesOnScreen(ExpenseObj) {
-  const expenseList = document.getElementById("expenseList");
+  const expenseList = document.getElementById('expenseList');
 
-  loadingExpense.style.display = "none";
+  loadingExpense.style.display = 'none';
 
   //creating a new li element
-  const expense = document.createElement("li");
-  expense.className = "list-group-item mb-0";
-  expense.style.background = "#f2f2f2";
+  const expense = document.createElement('li');
+  expense.className = 'list-group-item mb-0';
+  expense.style.background = '#f2f2f2';
 
   expense.innerHTML = `
   <div class = "d-block mb-2 text-capitalize" style="font-size: 17px;"> 
@@ -98,15 +98,15 @@ function showExpensesOnScreen(ExpenseObj) {
   </div>`;
 
   //Adding Edit Btn to each li element
-  let editBtn = document.createElement("button");
-  editBtn.className = "btn btn-success btn-sm d-inline-block me-2 ";
-  editBtn.appendChild(document.createTextNode("EDIT"));
+  let editBtn = document.createElement('button');
+  editBtn.className = 'btn btn-success btn-sm d-inline-block me-2 ';
+  editBtn.appendChild(document.createTextNode('EDIT'));
   expense.appendChild(editBtn);
 
   //Adding delete Btn to each li element
-  let deleteBtn = document.createElement("button");
-  deleteBtn.className = "btn btn-danger btn-sm d-inline-block ";
-  deleteBtn.appendChild(document.createTextNode("DELETE"));
+  let deleteBtn = document.createElement('button');
+  deleteBtn.className = 'btn btn-danger btn-sm d-inline-block ';
+  deleteBtn.appendChild(document.createTextNode('DELETE'));
 
   expense.append(deleteBtn);
 
@@ -114,46 +114,46 @@ function showExpensesOnScreen(ExpenseObj) {
   expenseList.append(expense);
 
   // adding event Listeners to edit btn
-  editBtn.addEventListener("click", editExpense);
+  editBtn.addEventListener('click', editExpense);
 
   function editExpense() {
-    document.getElementById("submitBtn").style.display = "none";
-    document.getElementById("updateBtn").style.display = "block";
+    document.getElementById('submitBtn').style.display = 'none';
+    document.getElementById('updateBtn').style.display = 'block';
 
     // Sending the expense values to form inputs
-    document.getElementById("amount").value = ExpenseObj.amount;
-    document.getElementById("description").value = ExpenseObj.description;
-    document.getElementById("category").value = ExpenseObj.category;
-    document.getElementById("amount").focus();
+    document.getElementById('amount').value = ExpenseObj.amount;
+    document.getElementById('description').value = ExpenseObj.description;
+    document.getElementById('category').value = ExpenseObj.category;
+    document.getElementById('amount').focus();
 
     // Update button onclick event handler
-    document.getElementById("updateBtn").onclick = updateExpense;
+    document.getElementById('updateBtn').onclick = updateExpense;
 
     function updateExpense() {
       let updatedExpense = {
-        amount: document.getElementById("amount").value,
-        description: document.getElementById("description").value,
-        category: document.getElementById("category").value,
+        amount: document.getElementById('amount').value,
+        description: document.getElementById('description').value,
+        category: document.getElementById('category').value,
       };
 
       // check for the input fields
       if (
-        updatedExpense.amount === "" ||
-        updatedExpense.description === "" ||
-        updatedExpense.category === ""
+        updatedExpense.amount === '' ||
+        updatedExpense.description === '' ||
+        updatedExpense.category === ''
       )
-        alert("All inputs should be filled");
+        alert('All inputs should be filled');
       else {
         axios
           .put(
-            `http://localhost:3000/expense/edit-expense/${ExpenseObj.id}`,
+            `http://localhost:3000/expenses/edit-expense/${ExpenseObj.id}`,
             updatedExpense,
             {
               headers: { Authorization: token },
             }
           )
           .then((updatedExpense) => {
-            let showTotalExpense = document.getElementById("totalExpense");
+            let showTotalExpense = document.getElementById('totalExpense');
             totalPrice -= parseFloat(ExpenseObj.amount);
 
             ExpenseObj = { ...updatedExpense.data };
@@ -171,13 +171,13 @@ function showExpensesOnScreen(ExpenseObj) {
             showTotalExpense.innerText = rupee.format(totalPrice);
 
             // resetting the submit and update buttons
-            document.getElementById("submitBtn").style.display = "block";
-            document.getElementById("updateBtn").style.display = "none";
+            document.getElementById('submitBtn').style.display = 'block';
+            document.getElementById('updateBtn').style.display = 'none';
 
             // resetting the form inputs
-            document.getElementById("amount").value = "";
-            document.getElementById("description").value = "";
-            document.getElementById("category").value = "";
+            document.getElementById('amount').value = '';
+            document.getElementById('description').value = '';
+            document.getElementById('category').value = '';
 
             return updatedExpense.data;
           })
@@ -190,22 +190,25 @@ function showExpensesOnScreen(ExpenseObj) {
   }
 
   // deleting an expense
-  deleteBtn.addEventListener("click", deleteExpense);
+  deleteBtn.addEventListener('click', deleteExpense);
   function deleteExpense() {
     // console.log(token);
     axios
-      .delete(`http://localhost:3000/expense/delete-expense/${ExpenseObj.id}`, {
-        headers: { Authorization: token },
-      })
+      .delete(
+        `http://localhost:3000/expenses/delete-expense/${ExpenseObj.id}`,
+        {
+          headers: { Authorization: token },
+        }
+      )
       .then((deletedExpense) => {
-        let showTotalExpense = document.getElementById("totalExpense");
+        let showTotalExpense = document.getElementById('totalExpense');
         totalPrice -= parseFloat(deletedExpense.data.expense.amount);
         showTotalExpense.innerText = rupee.format(totalPrice);
         expenseList.removeChild(expense);
 
         if (!expenseList.childNodes[0]) {
-          loadingExpense.innerHTML = "No Expenses found on this page!";
-          loadingExpense.style.display = "block";
+          loadingExpense.innerHTML = 'No Expenses found on this page!';
+          loadingExpense.style.display = 'block';
         }
         return deletedExpense.data;
       })
@@ -218,13 +221,13 @@ function showExpensesOnScreen(ExpenseObj) {
 
 function showOnReload(page, limit) {
   // window.location.reload();
-  const totalExpense = document.getElementById("totalExpense");
-  loadingExpense.innerHTML = "Loding Expenses...";
-  loadingExpense.style.display = "block";
+  const totalExpense = document.getElementById('totalExpense');
+  loadingExpense.innerHTML = 'Loding Expenses...';
+  loadingExpense.style.display = 'block';
 
   setTimeout(() => {
     axios
-      .get(`http://localhost:3000/expense?page=${page}&limit=${limit}`, {
+      .get(`http://localhost:3000/expenses?page=${page}&limit=${limit}`, {
         headers: { Authorization: token },
       })
       .then(
@@ -238,14 +241,14 @@ function showOnReload(page, limit) {
             ...pageData
           },
         }) => {
-          const welcomeText = document.getElementById("welcomeText");
+          const welcomeText = document.getElementById('welcomeText');
           totalPrice = userTotalExpense;
           if (!expenses.length) {
-            welcomeText.innerText = `Hello, ${userName.split(" ")[0]}`;
-            loadingExpense.innerHTML = "Add New Expenses Here!";
+            welcomeText.innerText = `Hello, ${userName.split(' ')[0]}`;
+            loadingExpense.innerHTML = 'Add New Expenses Here!';
           } else {
-            welcomeText.innerText = `Hello, ${userName.split(" ")[0]}`;
-            loadingExpense.style.display = "none";
+            welcomeText.innerText = `Hello, ${userName.split(' ')[0]}`;
+            loadingExpense.style.display = 'none';
 
             expenses.forEach((expense) => {
               showExpensesOnScreen(expense);
@@ -253,15 +256,15 @@ function showOnReload(page, limit) {
             showPagination(pageData);
           }
           if (!isPremium) {
-            document.getElementById("getpremium").style.display = "block";
-            document.getElementById("expenseList").style.marginBottom = "100px";
-            document.getElementById("lbUserList").style.display = "none";
+            document.getElementById('getpremium').style.display = 'block';
+            document.getElementById('expenseList').style.marginBottom = '100px';
+            document.getElementById('lbUserList').style.display = 'none';
           } else {
             leaderBoardFeature();
-            document.getElementById("premiumUserText").innerText = `Hey ${
-              userName.split(" ")[0]
+            document.getElementById('premiumUserText').innerText = `Hey ${
+              userName.split(' ')[0]
             }, You Are A Premium User`;
-            document.getElementById("premiumUser").style.display = "block";
+            document.getElementById('premiumUser').style.display = 'block';
           }
           totalExpense.innerHTML = rupee.format(totalPrice);
         }
@@ -270,9 +273,9 @@ function showOnReload(page, limit) {
         totalExpense.innerHTML = rupee.format(totalPrice);
         console.log(err.message);
         setTimeout(() => {
-          window.location.replace("../login/login.html");
+          window.location.replace('../login/login.html');
         }, 1500);
-        loadingExpense.innerHTML = "Not authorized, please login again!";
+        loadingExpense.innerHTML = 'Not authorized, please login again!';
       });
   }, 800);
 }
@@ -286,48 +289,48 @@ function showPagination({
   previousPage,
 }) {
   // console.log(previousPage);
-  const paginationDiv = document.createElement("div");
-  paginationDiv.className = "g-2";
-  paginationDiv.setAttribute("id", "paginationDiv");
-  const expenseListDiv = document.getElementById("expenseList").parentElement;
+  const paginationDiv = document.createElement('div');
+  paginationDiv.className = 'g-2';
+  paginationDiv.setAttribute('id', 'paginationDiv');
+  const expenseListDiv = document.getElementById('expenseList').parentElement;
 
-  const expenseList = document.getElementById("expenseList");
+  const expenseList = document.getElementById('expenseList');
 
   if (hasPreviousPage) {
-    const btn1 = document.createElement("button");
-    btn1.className = "btn btn-outline-primary";
+    const btn1 = document.createElement('button');
+    btn1.className = 'btn btn-outline-primary';
     btn1.innerHTML = previousPage;
-    btn1.addEventListener("click", () => {
+    btn1.addEventListener('click', () => {
       while (expenseList.lastElementChild) {
         expenseList.removeChild(expenseList.lastElementChild);
       }
-      document.getElementById("paginationDiv").remove();
+      document.getElementById('paginationDiv').remove();
       showOnReload(previousPage, limit);
     });
     paginationDiv.appendChild(btn1);
   }
 
-  const btn2 = document.createElement("button");
-  btn2.className = "btn btn-primary mx-2";
+  const btn2 = document.createElement('button');
+  btn2.className = 'btn btn-primary mx-2';
   btn2.innerHTML = currentPage;
-  btn2.addEventListener("click", () => {
+  btn2.addEventListener('click', () => {
     while (expenseList.lastElementChild) {
       expenseList.removeChild(expenseList.lastElementChild);
     }
-    document.getElementById("paginationDiv").remove();
+    document.getElementById('paginationDiv').remove();
     showOnReload(currentPage, limit);
   });
   paginationDiv.appendChild(btn2);
 
   if (hasNextPage) {
-    const btn3 = document.createElement("button");
-    btn3.className = "btn btn-outline-primary";
+    const btn3 = document.createElement('button');
+    btn3.className = 'btn btn-outline-primary';
     btn3.innerHTML = naxtPage;
-    btn3.addEventListener("click", () => {
+    btn3.addEventListener('click', () => {
       while (expenseList.lastElementChild) {
         expenseList.removeChild(expenseList.lastElementChild);
       }
-      document.getElementById("paginationDiv").remove();
+      document.getElementById('paginationDiv').remove();
       showOnReload(naxtPage, limit);
     });
     paginationDiv.appendChild(btn3);
@@ -339,17 +342,17 @@ function showPagination({
 /* LEADERBOARD FEATURES START */
 function leaderBoardFeature() {
   axios
-    .get("http://localhost:3000/expense/lb-users-expenses", {
+    .get('http://localhost:3000/expenses/lb-users-expenses', {
       headers: { Authorization: token },
     })
     .then((users) => {
-      const lbDisplay = document.getElementById("lbDisplay");
-      document.getElementById("lbUserList").remove();
+      const lbDisplay = document.getElementById('lbDisplay');
+      document.getElementById('lbUserList').remove();
 
-      const lbUserList = document.createElement("ul");
-      lbUserList.className = "list-unstyled list-group w-100";
+      const lbUserList = document.createElement('ul');
+      lbUserList.className = 'list-unstyled list-group w-100';
 
-      lbUserList.setAttribute("id", "lbUserList");
+      lbUserList.setAttribute('id', 'lbUserList');
       lbUserList.innerHTML = `<li
       class="list-group-item d-flex justify-content-between list-group-item-dark fs-6 fw-bold">
         <span class="d-flex" style="width: 60%">
@@ -362,9 +365,9 @@ function leaderBoardFeature() {
 
       let i = 0;
       users.data.users.forEach((user) => {
-        const lbUser = document.createElement("li");
+        const lbUser = document.createElement('li');
         lbUser.className =
-          "list-group-item d-flex justify-content-between align-items-center list-group-item-danger";
+          'list-group-item d-flex justify-content-between align-items-center list-group-item-danger';
         lbUser.innerHTML = `<span class="d-flex align-items-center" style="width: 75%"><span class='d-none'>${
           user.id
         }</span><span style="width: 20%">${(i += 1)}</span> <span>${
@@ -373,35 +376,35 @@ function leaderBoardFeature() {
 
         lbUserList.appendChild(lbUser);
       });
-      lbDisplay.style.display = "block";
+      lbDisplay.style.display = 'block';
     })
     .catch((err) => console.log(err.message));
 }
 /* LEADERBOARD FEATURES END */
 
-const logout = document.getElementById("logout");
-logout.addEventListener("click", () => {
-  localStorage.setItem("token", "");
-  localStorage.removeItem("listOfExpenseToShow");
-  window.location.replace("../login/login.html");
+const logout = document.getElementById('logout');
+logout.addEventListener('click', () => {
+  localStorage.setItem('token', '');
+  localStorage.removeItem('listOfExpenseToShow');
+  window.location.replace('../login/login.html');
 });
 
-const profilePic = document.getElementById("profilePic");
-profilePic.addEventListener("click", () => {
-  const welcomeDiv = document.getElementById("welcomeDiv");
-  welcomeDiv.classList.toggle("profileShow");
+const profilePic = document.getElementById('profilePic');
+profilePic.addEventListener('click', () => {
+  const welcomeDiv = document.getElementById('welcomeDiv');
+  welcomeDiv.classList.toggle('profileShow');
 });
 
 // Function to handle premium purchase
 document
-  .getElementById("getpremium")
-  .addEventListener("click", purchasePremiumService);
+  .getElementById('getpremium')
+  .addEventListener('click', purchasePremiumService);
 
 function purchasePremiumService(e) {
   e.preventDefault();
 
   axios
-    .get("http://localhost:3000/order/premiummembership", {
+    .get('http://localhost:3000/order/premiummembership', {
       headers: { Authorization: token },
     })
     .then((res) => {
@@ -417,24 +420,24 @@ function purchasePremiumService(e) {
           // Send the payment_id to your server for updating transaction status
           try {
             const response = await axios.post(
-              "http://localhost:3000/order/updatetrnasectionstatus",
+              'http://localhost:3000/order/updatetrnasectionstatus',
               { order_id: options.order_id, payment_id: payment_id },
               {
                 headers: { Authorization: token },
               }
             );
-            document.getElementById("premiumUserText").innerText = `Hey ${
-              response.data.userName.split(" ")[0]
+            document.getElementById('premiumUserText').innerText = `Hey ${
+              response.data.userName.split(' ')[0]
             }, You Are A Premium User`;
-            document.getElementById("getpremium").style.display = "none";
-            document.getElementById("premiumUser").style.display = "block";
+            document.getElementById('getpremium').style.display = 'none';
+            document.getElementById('premiumUser').style.display = 'block';
 
-            document.getElementById("expenseList").style.marginBottom = "0";
+            document.getElementById('expenseList').style.marginBottom = '0';
             leaderBoardFeature();
-            alert("You are a Premium User Now!");
+            alert('You are a Premium User Now!');
           } catch (error) {
-            console.error("Error updating transaction status:", error);
-            alert("Payment successful, but transaction update failed.");
+            console.error('Error updating transaction status:', error);
+            alert('Payment successful, but transaction update failed.');
           }
         },
       };
@@ -444,26 +447,26 @@ function purchasePremiumService(e) {
       rzp1.open();
 
       // Handle payment failure
-      rzp1.on("payment.failed", function (response) {
+      rzp1.on('payment.failed', function (response) {
         axios
           .post(
-            "http://localhost:3000/order/updatetrnasectionstatus",
+            'http://localhost:3000/order/updatetrnasectionstatus',
             response,
             {
               headers: { Authorization: token },
             }
           )
           .then(() => {
-            alert("Payment failed. Please try again or contact support.");
+            alert('Payment failed. Please try again or contact support.');
           })
           .catch((err) => {
-            console.error("Error:", err.message);
-            alert("An error occurred. Please try again later.");
+            console.error('Error:', err.message);
+            alert('An error occurred. Please try again later.');
           });
       });
     })
     .catch((err) => {
-      console.error("Error:", err.message);
-      alert("An error occurred. Please try again later.");
+      console.error('Error:', err.message);
+      alert('An error occurred. Please try again later.');
     });
 }

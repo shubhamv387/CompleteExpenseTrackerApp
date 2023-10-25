@@ -1,9 +1,9 @@
-const Expense = require("../model/Expense");
-const User = require("../model/User");
-const sequelize = require("../utils/database");
+const Expense = require('../model/Expense');
+const User = require('../model/User');
+const sequelize = require('../utils/database');
 
 // @desc    getting all expenses
-// @route   GET /expense/
+// @route   GET /expenses/
 // @access  Private
 exports.getAllExpenses = async (req, res, next) => {
   try {
@@ -14,19 +14,19 @@ exports.getAllExpenses = async (req, res, next) => {
       expenses: expenses,
     });
   } catch (error) {
-    console.log({ Error: "Something Wrong", error });
-    return res.status(400).json({ Error: "Something Wrong", error });
+    console.log({ Error: 'Something Wrong', error });
+    return res.status(400).json({ Error: 'Something Wrong', error });
   }
 };
 
 // @desc    getting all expenses
-// @route   GET /expense/
+// @route   GET /expenses/
 // @access  Private
 exports.generateReport = async (req, res, next) => {
   try {
     const expenses = await req.user.getExpenses({
-      attributes: ["createdAt", "description", "category", "amount"],
-      order: [["createdAt", "DESC"]],
+      attributes: ['createdAt', 'description', 'category', 'amount'],
+      order: [['createdAt', 'DESC']],
     });
     return res.json({
       userName: req.user.name,
@@ -34,13 +34,13 @@ exports.generateReport = async (req, res, next) => {
       expenses,
     });
   } catch (error) {
-    console.log({ Error: "Something Wrong", error });
-    return res.status(400).json({ Error: "Something Wrong", error });
+    console.log({ Error: 'Something Wrong', error });
+    return res.status(400).json({ Error: 'Something Wrong', error });
   }
 };
 
 // @desc    Add New Expense
-// @route   POST /expense/add-expense
+// @route   POST /expenses/add-expense
 // @access  Private
 exports.addExpense = async (req, res, next) => {
   const { amount, description, category } = req.body;
@@ -66,12 +66,12 @@ exports.addExpense = async (req, res, next) => {
   } catch (error) {
     await t.rollback();
     console.log(error);
-    return res.status(400).json({ Error: "Something Wrong", error });
+    return res.status(400).json({ Error: 'Something Wrong', error });
   }
 };
 
 // @desc    Edit An Expense
-// @route   PUT /expense/edit-expense/:id
+// @route   PUT /expenses/edit-expense/:id
 // @access  Private
 exports.editExpense = async (req, res, next) => {
   const { id } = req.params;
@@ -109,12 +109,12 @@ exports.editExpense = async (req, res, next) => {
   } catch (error) {
     await t.rollback();
     console.log(error);
-    return res.status(400).json({ Error: "Something Wrong", error });
+    return res.status(400).json({ Error: 'Something Wrong', error });
   }
 };
 
 // @desc    Delete An Expense
-// @route   DELETE /expense/delete-expense/:id
+// @route   DELETE /expenses/delete-expense/:id
 // @access  Private
 exports.deleteExpense = async (req, res, next) => {
   const { id } = req.params;
@@ -142,32 +142,32 @@ exports.deleteExpense = async (req, res, next) => {
   } catch (error) {
     await t.rollback();
     console.log(error);
-    return res.status(400).json({ Error: "Something Wrong", error });
+    return res.status(400).json({ Error: 'Something Wrong', error });
   }
 };
 
 // @desc    Getting All LB Users List
-// @route   GET /expense/lb-users-expenses
+// @route   GET /expenses/lb-users-expenses
 // @access  Private
 exports.getLbUsersExpenses = async (req, res, next) => {
   try {
     const users = await User.findAll({
-      attributes: ["id", "name", "allExpenses"],
-      order: [["allExpenses", "DESC"]],
+      attributes: ['id', 'name', 'allExpenses'],
+      order: [['allExpenses', 'DESC']],
     });
 
     return res.json({
-      status: "Success",
+      status: 'Success',
       users: users,
     });
   } catch (error) {
     console.log(error);
-    return res.status(400).json({ Error: "Something Wrong", error });
+    return res.status(400).json({ Error: 'Something Wrong', error });
   }
 };
 
 // @desc    Getting All LB Users List
-// @route   GET /expense?page=pagenumber&limit
+// @route   GET /expenses?page=pagenumber&limit
 // @access  Private
 exports.getExpensePagination = async (req, res, next) => {
   try {
@@ -179,11 +179,11 @@ exports.getExpensePagination = async (req, res, next) => {
     const expenses = await req.user.getExpenses({
       offset: (page - 1) * ITEM_PER_PAGE,
       limit: ITEM_PER_PAGE,
-      order: [["createdAt", "DESC"]],
+      order: [['createdAt', 'DESC']],
     });
 
     return res.json({
-      status: "Success",
+      status: 'Success',
       userName: req.user.name,
       isPremium: req.user.isPremium,
       userTotalExpense: req.user.allExpenses,
@@ -197,7 +197,7 @@ exports.getExpensePagination = async (req, res, next) => {
     });
   } catch (error) {
     console.log(error);
-    return res.status(400).json({ Error: "Something Wrong", error });
+    return res.status(400).json({ Error: 'Something Wrong', error });
   }
 };
 
