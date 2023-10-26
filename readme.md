@@ -44,7 +44,7 @@
 
 ### Verifying token setting verified user in request object
 
-![Authenticate User](https://drive.google.com/file/d/1DtNWJJq6ATSYZzgDRUbSkFPdo38uH2zL/view?usp=sharing)
+![Authenticate User](https://github.com/shubhamv387/CompleteExpenseTrackerApp/assets/139668370/7cdf4190-663f-4bf5-a2b0-749709ce848b)
 
 ### Pagination implementation
 
