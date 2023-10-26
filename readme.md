@@ -10,7 +10,7 @@
 
 ![Password Reset](./images/passwordReset.png)
 
-### Expense Page for normal users
+### Expense Page for Not A Premium users
 
 ![Not Premium User](./images/notPremiumUser.png)
 
@@ -34,7 +34,7 @@
 
 ![Generate Report](./images/generateReport.png)
 
-### Generate Token useing JWT method
+### Generate Token using JWT method
 
 ![Generate Token](./images/generateToken.png)
 
@@ -44,7 +44,7 @@
 
 ### Verifying token setting verified user in request object
 
-![Authenticate User](./images/authenticateUser.png)
+![Authenticate User](https://drive.google.com/file/d/1DtNWJJq6ATSYZzgDRUbSkFPdo38uH2zL/view?usp=sharing)
 
 ### Pagination implementation
 
